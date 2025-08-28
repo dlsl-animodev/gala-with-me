@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Student } from "../lib/types";
+import { useAuth } from "../context/auth-context";
+import Clock from "./clock";
 
 export default function RegistrationPage() {
   const [studentId, setStudentId] = useState("");
   const [error, setError] = useState("");
-  const [studentName, setStudentName] = useState("");
+  const { student, login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,14 +26,11 @@ export default function RegistrationPage() {
       const data = await response.json();
 
       if (data.email_address && data.partner_id) {
-        const student: Student = {
-          partner_id: data.partner_id,
-          email_address: data.email_address,
-          department: data.department || "N/A",
-          fullName: data.email_address.split("@")[0].replace("_", " "),
-          photoUrl: null,
+        const newStudent = {
+          id: data.partner_id,
+          name: data.email_address.split("@")[0].replace("_", " "),
         };
-        setStudentName(student.fullName);
+        login(newStudent); // Save to context + localStorage
       } else {
         setError("Invalid student data.");
       }
@@ -41,6 +39,11 @@ export default function RegistrationPage() {
       setError("Network error. Please try again.");
     }
   };
+
+  // If already logged in, show clock
+  if (student) {
+    return <Clock />;
+  }
 
   return (
     <div className="h-screen flex items-center justify-center bg-gray-100">
@@ -68,13 +71,6 @@ export default function RegistrationPage() {
           Submit
         </button>
       </form>
-
-      {/* sample display of student id you guys have to implement nav to main page with the clock and it should be connected to the uuid of the supabase thingy :D*/}
-      {studentName && (
-        <p className="mt-4 text-lg font-semibold text-green-700">
-          Hi, {studentName}! 🎉
-        </p>
-      )}
     </div>
   );
 }
