@@ -3,11 +3,7 @@
 import { useState } from "react";
 import { Student } from "../lib/types";
 
-interface RegistrationPageProps {
-  onLoginSuccess: (student: Student) => void;
-}
-
-export default function RegistrationPage({}: RegistrationPageProps) {
+export default function RegistrationPage() {
   const [studentId, setStudentId] = useState("");
   const [error, setError] = useState("");
   const [studentName, setStudentName] = useState("");

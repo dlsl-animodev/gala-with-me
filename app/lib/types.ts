@@ -7,10 +7,9 @@ export interface Attendance {
 }
 
 export interface Student {
-  // Represents the data structure returned by the API
   email_address: string;
   department: string;
-  photoUrl: string | null; // URL to the student's photo
+  photoUrl: string | null;
   fullName: string; // Derived from email or other source
   partner_id: string; // The "real" unique student identifier from the API
 }
