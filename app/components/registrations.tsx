@@ -1,4 +1,6 @@
 "use client";
+import "../styles/style.css";
+
 
 import { useState } from "react";
 import { useAuth } from "../context/auth-context";

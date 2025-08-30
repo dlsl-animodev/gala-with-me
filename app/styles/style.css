@@ -1,0 +1,107 @@
+/* === RetroCube x Flipper Zero Theme === */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+:root {
+  --retro-bg: #0d0d0d;
+  --retro-orange: #ff6b00;
+  --retro-orange-dark: #cc5500;
+  --retro-accent: #ffaa55;
+  --retro-error: #ff3c00;
+  --retro-gray: #1a1a1a;
+}
+
+body {
+  background-color: var(--retro-bg);
+  color: var(--retro-orange);
+  font-family: 'Press Start 2P', monospace;
+  margin: 0;
+  padding: 0;
+}
+
+/* Center wrapper */
+.h-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: repeating-linear-gradient(
+    0deg,
+    #0d0d0d,
+    #0d0d0d 2px,
+    #111111 2px,
+    #111111 4px
+  );
+}
+
+/* Retro-styled form */
+form {
+  background: var(--retro-gray);
+  border: 2px solid var(--retro-orange);
+  box-shadow: 0 0 20px var(--retro-orange-dark);
+  padding: 2rem;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+/* Title */
+form h1 {
+  font-size: 14px;
+  margin-bottom: 1.5rem;
+  color: var(--retro-accent);
+  text-shadow: 0 0 5px var(--retro-orange);
+}
+
+/* Input field */
+input[type="text"] {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 1rem;
+  border: 2px solid var(--retro-orange);
+  border-radius: 6px;
+  background-color: #000;
+  color: var(--retro-accent);
+  font-size: 12px;
+  outline: none;
+  text-align: center;
+}
+
+input[type="text"]::placeholder {
+  color: #666;
+  font-size: 10px;
+}
+
+/* Error message */
+p {
+  color: var(--retro-error);
+  font-size: 10px;
+  margin-bottom: 1rem;
+}
+
+/* Button */
+button {
+  width: 100%;
+  background-color: var(--retro-orange);
+  border: none;
+  padding: 12px;
+  font-size: 12px;
+  font-family: 'Press Start 2P', monospace;
+  color: #000;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+  box-shadow: 0 0 10px var(--retro-orange-dark);
+}
+
+button:hover:not(:disabled) {
+  background-color: var(--retro-orange-dark);
+  box-shadow: 0 0 20px var(--retro-accent);
+}
+
+button:disabled {
+  background-color: #444;
+  color: #999;
+  cursor: not-allowed;
+  box-shadow: none;
+}
