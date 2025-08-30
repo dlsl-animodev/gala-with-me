@@ -6,10 +6,7 @@ import { supabase, User } from "../lib/supabase";
 interface Student {
   id: string;
   name: string;
-}
-
-interface StudentData {
-  department?: string;
+  department: string;
 }
 
 interface AuthContextType {
@@ -19,7 +16,7 @@ interface AuthContextType {
   error: string | null;
   login: (student: Student) => void;
   logout: () => void;
-  createOrUpdateUser: (studentData: StudentData) => Promise<User | null>;
+  createOrUpdateUser: (studentData: Student) => Promise<User | null>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -57,26 +54,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
-      console.log('Loading user for student:', student);
+      console.log("Loading user for student:", student);
       setLoading(true);
       setError(null);
 
       try {
         // Add timeout to prevent hanging
-        const timeoutPromise = new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Database connection timeout')), 10000)
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(
+            () => reject(new Error("Database connection timeout")),
+            10000
+          )
         );
 
         const queryPromise = supabase
-          .from('users')
-          .select('*')
-          .eq('student_id', student.id);
+          .from("users")
+          .select("*")
+          .eq("student_id", student.id);
 
         const result = await Promise.race([queryPromise, timeoutPromise]);
-        const { data, error } = result as { data: User[] | null; error: { code?: string; message: string } | null };
+        const { data, error } = result as {
+          data: User[] | null;
+          error: { code?: string; message: string } | null;
+        };
 
         if (error) {
-          console.error('Error loading user:', error);
+          console.error("Error loading user:", error);
           setError(`Database error: ${error.message}`);
           setLoading(false);
           return;
@@ -84,17 +87,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         // Check if user exists
         if (data && data.length > 0) {
-          console.log('Found existing user:', data[0]);
+          console.log("Found existing user:", data[0]);
           setUser(data[0]);
         } else {
-          console.log('No existing user found, will need to create one');
+          console.log("No existing user found, will need to create one");
           setUser(null);
         }
-        
+
         setLoading(false);
       } catch (err) {
-        console.error('Error loading user:', err);
-        setError(err instanceof Error ? err.message : 'Failed to load user profile');
+        console.error("Error loading user:", err);
+        setError(
+          err instanceof Error ? err.message : "Failed to load user profile"
+        );
         setLoading(false);
       }
     };
@@ -102,10 +107,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     loadUser();
   }, [student]);
 
-  const createOrUpdateUser = async (studentData: StudentData): Promise<User | null> => {
+  const createOrUpdateUser = async (
+    studentData: Student
+  ): Promise<User | null> => {
     if (!student) return null;
 
-    console.log('Creating/updating user for:', student, 'with data:', studentData);
+    console.log(
+      "Creating/updating user for:",
+      student,
+      "with data:",
+      studentData
+    );
     setLoading(true);
     setError(null);
 
@@ -113,39 +125,41 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const userData = {
         student_id: student.id,
         name: student.name,
-        department: studentData.department || 'Unknown',
+        department: studentData.department || "Unknown",
         preferred_time: null,
       };
 
-      console.log('Checking if user exists first...');
+      console.log("Checking if user exists first...");
 
       // First, check if user already exists
       const { data: existingUsers, error: checkError } = await supabase
-        .from('users')
-        .select('*')
-        .eq('student_id', student.id);
+        .from("users")
+        .select("*")
+        .eq("student_id", student.id);
 
       if (checkError) {
-        console.error('Error checking existing user:', checkError);
+        console.error("Error checking existing user:", checkError);
         setError(`Failed to check user: ${checkError.message}`);
         setLoading(false);
         return null;
       }
 
-      console.log('Existing users found:', existingUsers);
+      console.log("Existing users found:", existingUsers);
 
       let result;
       if (existingUsers && existingUsers.length > 0) {
-
-        console.log('User already exists, using existing record:', existingUsers[0]);
+        console.log(
+          "User already exists, using existing record:",
+          existingUsers[0]
+        );
         setUser(existingUsers[0]);
         setLoading(false);
         return existingUsers[0];
       } else {
         // create new user
-        console.log('Creating new user with data:', userData);
+        console.log("Creating new user with data:", userData);
         const { data, error } = await supabase
-          .from('users')
+          .from("users")
           .insert(userData)
           .select()
           .single();
@@ -155,26 +169,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const { data, error } = result;
 
       if (error) {
-        console.error('Error creating user:', error);
-        
+        console.error("Error creating user:", error);
+
         // redundant rls t__T
-        if (error.code === '42501') {
-          setError('Database security error: Please check your Supabase Row Level Security policies.');
+        if (error.code === "42501") {
+          setError(
+            "Database security error: Please check your Supabase Row Level Security policies."
+          );
         } else {
           setError(`Failed to create profile: ${error.message}`);
         }
-        
+
         setLoading(false);
         return null;
       }
 
-      console.log('Successfully created user:', data);
+      console.log("Successfully created user:", data);
       setUser(data);
       setLoading(false);
       return data;
     } catch (err) {
-      console.error('Error creating/updating user:', err);
-      const errorMessage = err instanceof Error ? err.message : 'Failed to create user profile';
+      console.error("Error creating/updating user:", err);
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to create user profile";
       setError(errorMessage);
       setLoading(false);
       return null;
@@ -191,7 +208,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ student, user, loading, error, login, logout, createOrUpdateUser }}>
+    <AuthContext.Provider
+      value={{
+        student,
+        user,
+        loading,
+        error,
+        login,
+        logout,
+        createOrUpdateUser,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
