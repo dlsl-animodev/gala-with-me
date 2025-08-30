@@ -1,26 +1,41 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    /* RetroCube x Flipper Zero Theme Variables */
+    --font-retro: 'Press Start 2P', monospace;
+    --retro-bg: #0d0d0d;
+    --retro-orange: #ff6b00;
+    --retro-orange-dark: #cc5500;
+    --retro-accent: #ffaa55;
+    --retro-error: #ff3c00;
+    --retro-gray: #1a1a1a;
+
+    /* Defaults (fallbacks if needed elsewhere) */
+    --background: var(--retro-bg);
+    --foreground: var(--retro-orange);
   }
 }
 
+/* Tailwind theme extension inline (so you can use bg-background, text-foreground, font-retro, etc.) */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-retro: var(--font-retro);
+}
+
+/* Dark mode scheme still supported */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: var(--retro-bg);
+    --foreground: var(--retro-orange);
+  }
+}
+
+/* Base body styles */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--retro-bg);
+  color: var(--retro-orange);
+  font-family: var(--font-retro);
 }
