@@ -18,17 +18,14 @@ export default function TimePicker({ user, selectedTime, onTimeSelect }: TimePic
 
     try {
       const { error } = await supabase
-        .from('users')
+        .from("users")
         .update({ preferred_time: time })
-        .eq('id', user.id);
+        .eq("id", user.id);
 
-      if (error) {
-        console.error('Error updating preferred time:', error);
-      } else {
-        console.log('Preferred time updated successfully:', time);
-      }
+      if (error) console.error("Error updating preferred time:", error);
+      else console.log("Preferred time updated successfully:", time);
     } catch (err) {
-      console.error('Error updating preferred time:', err);
+      console.error("Error updating preferred time:", err);
     }
   };
 
@@ -36,7 +33,6 @@ export default function TimePicker({ user, selectedTime, onTimeSelect }: TimePic
     if (time) {
       onTimeSelect(time);
       const hour = time.hour();
-      // Convert 24-hour to 12-hour format for storage
       const hour12 = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
       updatePreferredTime(hour12);
     }
@@ -51,28 +47,47 @@ export default function TimePicker({ user, selectedTime, onTimeSelect }: TimePic
 
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <div className="flex flex-col items-center space-y-6">
-        <h2 className="text-2xl font-bold text-center text-black">
-          Choose your preferred time
+      <div className="flex flex-col items-center space-y-6 min-h-screen justify-center bg-[#f5f5f5] p-4">
+        {/* Header */}
+        <h2 className="text-2xl font-bold text-center text-[#ff6b00] 
+                       [text-shadow:0_0_5px_#ff6b00,0_0_10px_#ffaa55] animate-pulse">
+          ⏰ Choose your preferred time
         </h2>
-        
-        <div className="w-full max-w-sm">
+
+        {/* Time Picker Container */}
+        <div className="w-full max-w-sm bg-white rounded-2xl border-4 border-[#ff6b00] 
+                        shadow-[0_0_15px_rgba(255,107,0,0.4)] p-6">
           <StaticTimePicker
             value={selectedTime}
             onChange={handleTimeSelect}
-            views={['hours']}
+            views={["hours"]}
             slotProps={{
-              actionBar: {
-                actions: [],
+              actionBar: { actions: [] },
+            }}
+            sx={{
+              "& .MuiClockPicker-root": {
+                backgroundColor: "#fff7f0",
+                borderRadius: "1rem",
+                boxShadow: "0 0 15px rgba(255,107,0,0.3)",
+              },
+              "& .Mui-selected": {
+                backgroundColor: "#ff6b00 !important",
+                color: "#fff !important",
+              },
+              "& .MuiClockPicker-clock": {
+                color: "#ff6b00",
               },
             }}
           />
         </div>
 
+        {/* Display Selected Time */}
         {selectedTime && (
-          <div className="text-center space-y-4">
-            <p className="text-lg">
-              You selected: <span className="font-bold">{getDisplayTime()}</span>
+          <div className="text-center space-y-2 bg-[#fff7f0] px-6 py-4 rounded-xl 
+                          border-2 border-[#ff6b00] shadow-[0_0_10px_#ff6b00]">
+            <p className="text-lg text-black font-[var(--font-retro)]">
+              You selected:{" "}
+              <span className="font-bold text-[#ff6b00]">{getDisplayTime()}</span>
             </p>
           </div>
         )}
