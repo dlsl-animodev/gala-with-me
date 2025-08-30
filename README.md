@@ -1,36 +1,82 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Dating Clock
 
-## Getting Started
+A Next.js application where users can match with others by selecting their preferred time on a clock interface and sharing QR codes.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- Student authentication via external API
+- Interactive clock interface for time selection
+- QR code generation and scanning for matching
+- Real-time match notifications
+- Supabase database integration
+
+## Setup
+
+1. **Install dependencies:**
+   ```bash
+   bun install
+   ```
+
+2. **Set up Supabase:**
+   - Create a Supabase project at [supabase.com](https://supabase.com)
+   - Create the required tables (see Database Schema below)
+   - Copy your project URL and anon key
+
+3. **Environment variables:**
+   - Copy `.env.example` to `.env.local`
+   - Add your Supabase credentials:
+     ```
+     NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+     NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+     ```
+
+4. **Run the development server:**
+   ```bash
+   bun dev
+   ```
+
+## Database Schema
+
+Create these tables in your Supabase project:
+
+### Users Table
+```sql
+CREATE TABLE users (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  student_id TEXT UNIQUE NOT NULL,
+  name TEXT NOT NULL,
+  department TEXT NOT NULL,
+  preferred_time INTEGER,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Matches Table
+```sql
+CREATE TABLE matches (
+  id SERIAL PRIMARY KEY,
+  users1_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  users2_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  agreed_time INTEGER NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## How it Works
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. **Authentication:** Users enter their student ID, which is validated against an external API
+2. **Time Selection:** Users select their preferred hour (1-12) on an interactive clock
+3. **QR Code Generation:** Users can generate a QR code containing their user ID and selected time
+4. **QR Code Scanning:** Users can scan another person's QR code to attempt a match
+5. **Matching:** If both users selected the same time, a match is created in the database
+6. **Real-time Updates:** Users are notified of matches in real-time via Supabase subscriptions
 
-## Learn More
+## Technologies Used
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Next.js 15
+- React 19
+- TypeScript
+- Tailwind CSS
+- Supabase (Database & Real-time)
+- QR Code generation and scanning
+- Bun package manager
