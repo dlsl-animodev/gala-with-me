@@ -39,6 +39,7 @@ export default function QRScannerComponent({
           {
             highlightScanRegion: true,
             highlightCodeOutline: true,
+            preferredCamera: "environment",
           }
         );
 
@@ -89,7 +90,8 @@ export default function QRScannerComponent({
         </div>
         <button
           onClick={() => window.location.reload()}
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
+          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        >
           Retry
         </button>
       </div>
@@ -104,10 +106,13 @@ export default function QRScannerComponent({
           className="w-64 h-64 border rounded object-cover"
           autoPlay
           playsInline
+          muted
         />
         {!isScanning && (
           <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded">
-            <p className="text-white text-center">Click Start Scanning to begin</p>
+            <p className="text-white text-center">
+              Click Start Scanning to begin
+            </p>
           </div>
         )}
       </div>
@@ -116,13 +121,15 @@ export default function QRScannerComponent({
         {!isScanning ? (
           <button
             onClick={startScanning}
-            className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">
+            className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+          >
             Start Scanning
           </button>
         ) : (
           <button
             onClick={stopScanning}
-            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">
+            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+          >
             Stop Scanning
           </button>
         )}
