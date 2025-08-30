@@ -8,13 +8,21 @@ import QRActions from "./qr-actions";
 import MatchResult from "./match-result";
 import { Dayjs } from "dayjs";
 
-type Mode = 'clock' | 'show-qr' | 'scan-qr' | 'matched';
+type Mode = "clock" | "show-qr" | "scan-qr" | "matched";
 
 export default function Clock() {
-  const { student, user, loading: authLoading, error: authError, logout, createOrUpdateUser } = useAuth();
+  const {
+    student,
+    user,
+    loading: authLoading,
+    error: authError,
+    logout,
+    createOrUpdateUser,
+  } = useAuth();
   const [selectedTime, setSelectedTime] = useState<Dayjs | null>(null);
-  const [mode, setMode] = useState<Mode>('clock');
-  const [userCreationAttempted, setUserCreationAttempted] = useState<boolean>(false);
+  const [mode, setMode] = useState<Mode>("clock");
+  const [userCreationAttempted, setUserCreationAttempted] =
+    useState<boolean>(false);
 
   const {
     matchedUser,
@@ -28,44 +36,59 @@ export default function Clock() {
 
   useEffect(() => {
     const autoCreateUser = async () => {
-      if (student && !user && !authLoading && !authError && !userCreationAttempted) {
-        console.log('Auto-creating user for student:', student);
+      if (
+        student &&
+        !user &&
+        !authLoading &&
+        !authError &&
+        !userCreationAttempted
+      ) {
+        console.log("Auto-creating user for student:", student);
         setUserCreationAttempted(true);
-        
+
         await createOrUpdateUser({
-          department: 'Unknown' 
+          department: student.department || "Unknown",
+          id: student.id || "",
+          name: student.name || "",
         });
       }
     };
 
     autoCreateUser();
-  }, [student, user, authLoading, authError, userCreationAttempted, createOrUpdateUser]);
+  }, [
+    student,
+    user,
+    authLoading,
+    authError,
+    userCreationAttempted,
+    createOrUpdateUser,
+  ]);
 
   // switch to matched mode when a match is found
   useEffect(() => {
     if (matchedUser && success) {
-      setMode('matched');
+      setMode("matched");
     }
   }, [matchedUser, success]);
 
   const handleScanSuccess = async (qrData: string) => {
     const isSuccess = await handleQRScanSuccess(qrData, selectedTime);
     if (isSuccess) {
-      setMode('matched');
+      setMode("matched");
     }
   };
 
   const handleStartOver = () => {
     setSelectedTime(null);
-    setMode('clock');
+    setMode("clock");
     setMatchedUser(null);
-    setSuccess('');
-    setError('');
+    setSuccess("");
+    setError("");
   };
 
   const handleBack = () => {
-    setMode('clock');
-    setError('');
+    setMode("clock");
+    setError("");
   };
 
   if (authLoading) {
@@ -139,7 +162,7 @@ export default function Clock() {
         )}
 
         {/* Success Display */}
-        {success && mode !== 'matched' && (
+        {success && mode !== "matched" && (
           <div className="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
             {success}
           </div>
@@ -147,24 +170,24 @@ export default function Clock() {
 
         {/* Main Content */}
         <div className="bg-white rounded-lg shadow-lg p-6">
-          {mode === 'clock' && (
+          {mode === "clock" && (
             <>
               <TimePicker
                 user={user}
                 selectedTime={selectedTime}
                 onTimeSelect={setSelectedTime}
               />
-              
+
               {selectedTime && (
                 <div className="mt-6 flex justify-center space-x-4">
                   <button
-                    onClick={() => setMode('show-qr')}
+                    onClick={() => setMode("show-qr")}
                     className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
                   >
                     Generate QR Code
                   </button>
                   <button
-                    onClick={() => setMode('scan-qr')}
+                    onClick={() => setMode("scan-qr")}
                     className="px-6 py-2 bg-green-500 text-white rounded hover:bg-green-600"
                   >
                     Scan QR Code
@@ -174,7 +197,7 @@ export default function Clock() {
             </>
           )}
 
-          {(mode === 'show-qr' || mode === 'scan-qr') && (
+          {(mode === "show-qr" || mode === "scan-qr") && (
             <QRActions
               user={user}
               selectedTime={selectedTime}
@@ -184,7 +207,7 @@ export default function Clock() {
             />
           )}
 
-          {mode === 'matched' && matchedUser && (
+          {mode === "matched" && matchedUser && (
             <MatchResult
               matchedUser={matchedUser}
               success={success}

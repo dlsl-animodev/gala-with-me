@@ -31,15 +31,18 @@ export default function RegistrationPage() {
         const newStudent = {
           id: data.partner_id,
           name: data.email_address.split("@")[0].replace("_", " "),
+          department: data.department || "Unknown",
         };
-        
+
         // log in the student first
         login(newStudent);
-        
+
         createOrUpdateUser({
-          department: data.department || 'Unknown'
-        }).catch(err => {
-          console.error('Failed to create user profile:', err);
+          department: data.department || "Unknown",
+          id: data.partner_id || "",
+          name: data.email_address.split("@")[0].replace("_", " ") || "",
+        }).catch((err) => {
+          console.error("Failed to create user profile:", err);
         });
       } else {
         setError("Invalid student data.");
@@ -63,7 +66,9 @@ export default function RegistrationPage() {
         onSubmit={handleSubmit}
         className="bg-white p-6 rounded-lg shadow-md w-full max-w-sm"
       >
-        <h1 className="text-xl font-bold mb-4 text-center text-black">Student Check-In</h1>
+        <h1 className="text-xl font-bold mb-4 text-center text-black">
+          Student Check-In
+        </h1>
 
         <input
           type="text"
