@@ -7,11 +7,13 @@ import Clock from "./clock";
 export default function RegistrationPage() {
   const [studentId, setStudentId] = useState("");
   const [error, setError] = useState("");
-  const { student, login } = useAuth();
+  const [loading, setLoading] = useState(false);
+  const { student, login, createOrUpdateUser } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setLoading(true);
 
     try {
       const response = await fetch(
@@ -30,13 +32,23 @@ export default function RegistrationPage() {
           id: data.partner_id,
           name: data.email_address.split("@")[0].replace("_", " "),
         };
-        login(newStudent); // Save to context + localStorage
+        
+        // log in the student first
+        login(newStudent);
+        
+        createOrUpdateUser({
+          department: data.department || 'Unknown'
+        }).catch(err => {
+          console.error('Failed to create user profile:', err);
+        });
       } else {
         setError("Invalid student data.");
       }
     } catch (err) {
       console.error(err);
       setError("Network error. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -51,24 +63,26 @@ export default function RegistrationPage() {
         onSubmit={handleSubmit}
         className="bg-white p-6 rounded-lg shadow-md w-full max-w-sm"
       >
-        <h1 className="text-xl font-bold mb-4 text-center">Student Check-In</h1>
+        <h1 className="text-xl font-bold mb-4 text-center text-black">Student Check-In</h1>
 
         <input
           type="text"
           placeholder="Enter Student ID"
           value={studentId}
           onChange={(e) => setStudentId(e.target.value)}
-          className="w-full border px-3 py-2 rounded mb-3"
+          className="w-full border px-3 py-2 rounded mb-3 text-black"
           required
+          disabled={loading}
         />
 
         {error && <p className="text-red-600 text-sm mb-3">{error}</p>}
 
         <button
           type="submit"
-          className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700"
+          disabled={loading}
+          className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 disabled:bg-gray-400"
         >
-          Submit
+          {loading ? "Checking..." : "Submit"}
         </button>
       </form>
     </div>
