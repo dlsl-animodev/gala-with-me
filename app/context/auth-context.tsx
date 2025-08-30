@@ -85,7 +85,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           return;
         }
 
-        // Check if user exists
+        // check if user exists
         if (data && data.length > 0) {
           console.log("Found existing user:", data[0]);
           setUser(data[0]);
@@ -131,7 +131,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       console.log("Checking if user exists first...");
 
-      // First, check if user already exists
+      // first, check if user already exists
       const { data: existingUsers, error: checkError } = await supabase
         .from("users")
         .select("*")

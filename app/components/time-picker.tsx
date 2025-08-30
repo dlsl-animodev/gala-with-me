@@ -8,9 +8,10 @@ interface TimePickerProps {
   user: User | null;
   selectedTime: Dayjs | null;
   onTimeSelect: (time: Dayjs | null) => void;
+  isHourMatched?: (hour: number) => boolean;
 }
 
-export default function TimePicker({ user, selectedTime, onTimeSelect }: TimePickerProps) {
+export default function TimePicker({ user, selectedTime, onTimeSelect, isHourMatched }: TimePickerProps) {
   const updatePreferredTime = async (time: number) => {
     if (!user) return;
 
@@ -71,24 +72,30 @@ export default function TimePicker({ user, selectedTime, onTimeSelect }: TimePic
           const y = Math.sin(radian) * radius;
           
           const isSelected = selectedHour === hour;
+          const isMatched = isHourMatched ? isHourMatched(hour) : false;
           
           return (
             <button
               key={hour}
-              onClick={() => handleHourSelect(hour)}
+              onClick={() => !isMatched && handleHourSelect(hour)}
+              disabled={isMatched}
               className={`
                 absolute w-12 h-12 rounded-full font-bold text-lg transition-all transform -translate-x-1/2 -translate-y-1/2
-                ${isSelected
-                  ? 'bg-blue-500 text-white shadow-lg scale-110'
-                  : 'bg-white text-gray-700 border-2 border-gray-300 hover:border-blue-300 hover:bg-blue-50 hover:scale-105'
+                ${isMatched
+                  ? 'bg-gray-200 text-gray-400 cursor-not-allowed opacity-50'
+                  : isSelected
+                    ? 'bg-blue-500 text-white shadow-lg scale-110'
+                    : 'bg-white text-gray-700 border-2 border-gray-300 hover:border-blue-300 hover:bg-blue-50 hover:scale-105'
                 }
               `}
               style={{
                 left: `calc(50% + ${x}px)`,
                 top: `calc(50% + ${y}px)`,
               }}
+              title={isMatched ? `${hour}:00 - Already matched` : `Select ${hour}:00`}
             >
               {hour}
+              {isMatched && <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full"></span>}
             </button>
           );
         })}
