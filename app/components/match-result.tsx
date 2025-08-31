@@ -1,6 +1,6 @@
 "use client";
 
-import { User } from "../lib/supabase";
+import { User } from "../live/lib/supabase";
 
 interface MatchResultProps {
   matchedUser: User;
@@ -8,19 +8,29 @@ interface MatchResultProps {
   onStartOver: () => void;
 }
 
-export default function MatchResult({ matchedUser, success, onStartOver }: MatchResultProps) {
+export default function MatchResult({
+  matchedUser,
+  success,
+  onStartOver,
+}: MatchResultProps) {
   return (
     <div className="flex flex-col items-center space-y-6">
       <h2 className="text-3xl font-bold text-center text-green-600">
-        It&apos;s a Match! 
+        It&apos;s a Match!
       </h2>
-      
+
       <div className="bg-green-50 border border-green-200 rounded-lg p-6 text-center">
         <p className="text-lg mb-2">{success}</p>
         <div className="space-y-1 text-gray-700">
-          <p><strong>Matched with:</strong> {matchedUser.name}</p>
-          <p><strong>Department:</strong> {matchedUser.department}</p>
-          <p><strong>Student ID:</strong> {matchedUser.student_id}</p>
+          <p>
+            <strong>Matched with:</strong> {matchedUser.name}
+          </p>
+          <p>
+            <strong>Department:</strong> {matchedUser.department}
+          </p>
+          <p>
+            <strong>Student ID:</strong> {matchedUser.student_id}
+          </p>
         </div>
       </div>
 

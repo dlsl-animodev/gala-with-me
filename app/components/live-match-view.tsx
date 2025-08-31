@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { supabase, Match, User } from "../lib/supabase";
+import { supabase, Match, User } from "../live/lib/supabase";
 
 interface MatchWithUsers extends Match {
   user1: User;

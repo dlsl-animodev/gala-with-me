@@ -2,7 +2,7 @@
 
 import { Dayjs } from "dayjs";
 import dayjs from "dayjs";
-import { supabase, User } from "../lib/supabase";
+import { supabase, User } from "../live/lib/supabase";
 
 interface TimePickerProps {
   user: User | null;
