@@ -12,7 +12,41 @@ export function useMatchHandling({ user }: UseMatchHandlingProps) {
   const [matchedUser, setMatchedUser] = useState<User | null>(null);
   const [error, setError] = useState<string>("");
   const [success, setSuccess] = useState<string>("");
+  const [matchedHours, setMatchedHours] = useState<number[]>([]);
 
+  // get all matched hours for this user
+  const fetchMatchedHours = useCallback(async () => {
+    if (!user) return;
+
+    try {
+      const { data: matches, error } = await supabase
+        .from('matches')
+        .select('agreed_time')
+        .or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`);
+
+      if (error) {
+        console.error('Error fetching matched hours:', error);
+        return;
+      }
+
+      const hours = matches?.map(match => match.agreed_time) || [];
+      setMatchedHours(hours);
+    } catch (err) {
+      console.error('Error fetching matched hours:', err);
+    }
+  }, [user]);
+
+  // check if an hour is already matched
+  const isHourMatched = useCallback((hour: number) => {
+    return matchedHours.includes(hour);
+  }, [matchedHours]);
+
+  // fetch matched hours when user changes
+  useEffect(() => {
+    fetchMatchedHours();
+  }, [fetchMatchedHours]);
+
+  // update matched hours when a new match is found
   const handleMatchFound = useCallback(async (match: Match) => {
     try {
       console.log('Processing match found:', match);
@@ -42,12 +76,17 @@ export function useMatchHandling({ user }: UseMatchHandlingProps) {
       setMatchedUser(otherUser);
       setSuccess(`You matched with ${otherUser.name}! Both of you selected ${match.agreed_time}:00. Great choice!`);
       
-      // Clear any existing errors
+      console.log('Match notification set for user:', user?.name || user?.id);
+      
+      // refresh matched hours
+      fetchMatchedHours();
+      
+      // clear any existing errors
       setError('');
     } catch (err) {
       console.error('Error handling match:', err);
     }
-  }, [user?.id]);
+  }, [user?.id, user?.name, fetchMatchedHours]);
 
   const handleQRScanSuccess = async (qrData: string, selectedTime: Dayjs | null) => {
     try {
@@ -144,8 +183,33 @@ export function useMatchHandling({ user }: UseMatchHandlingProps) {
         return;
       }
 
-      setSuccess(`🎉 You matched with ${scannedUser.name}! Both of you selected ${selectedHour12}:00. Great choice! 🎉`);
+      console.log('Match created successfully! Broadcasting notification...');
+      
+      // Broadcast match notification immediately for real-time notification
+      try {
+        const notificationChannel = supabase.channel('match-notifications');
+        await notificationChannel.send({
+          type: 'broadcast',
+          event: 'match-created',
+          payload: {
+            user1_id: user.id,
+            user2_id: scannedUserId,
+            agreed_time: selectedHour12,
+            created_at: new Date().toISOString(),
+            user1_name: user.name,
+            user2_name: scannedUser.name,
+          }
+        });
+        console.log('Broadcast sent successfully');
+      } catch (broadcastError) {
+        console.error('Failed to send broadcast:', broadcastError);
+      }
+      
+      setSuccess(`You matched with ${scannedUser.name}! Both of you selected ${selectedHour12}:00. Great choice!`);
       setMatchedUser(scannedUser);
+      
+      // refresh matched hours immediately
+      fetchMatchedHours();
       
       // clear any existing errors
       setError('');
@@ -162,38 +226,63 @@ export function useMatchHandling({ user }: UseMatchHandlingProps) {
   useEffect(() => {
     if (!user) return;
 
-    const channel = supabase
-      .channel('matches')
+    console.log('Setting up real-time subscription for user:', user.id);
+
+    // database changes subscription
+    const dbChannel = supabase
+      .channel(`matches-${user.id}`)
       .on(
         'postgres_changes',
         {
           event: 'INSERT',
           schema: 'public',
           table: 'matches',
-          filter: `user1_id=eq.${user.id}`,
         },
         (payload) => {
-          console.log('New match detected (as user1):', payload);
-          handleMatchFound(payload.new as Match);
+          console.log('Real-time: New match detected:', payload);
+          const match = payload.new as Match;
+          
+          // check if this match involves the current user
+          if (match.user1_id === user.id || match.user2_id === user.id) {
+            console.log('Match involves current user, processing...');
+            handleMatchFound(match);
+          } else {
+            console.log('Match does not involve current user, ignoring...');
+          }
         }
       )
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'matches',
-          filter: `user2_id=eq.${user.id}`,
-        },
-        (payload) => {
-          console.log('New match detected (as user2):', payload);
-          handleMatchFound(payload.new as Match);
+      .subscribe((status) => {
+        console.log('DB Subscription status:', status);
+        if (status === 'SUBSCRIBED') {
+          console.log('Successfully subscribed to DB updates for user:', user.id);
+        } else if (status === 'CHANNEL_ERROR') {
+          console.error('Error subscribing to DB updates');
         }
-      )
-      .subscribe();
+      });
+
+    // broadcast subscription for immediate notifications
+    const broadcastChannel = supabase
+      .channel('match-notifications')
+      .on('broadcast', { event: 'match-created' }, (payload) => {
+        console.log('Broadcast: Match notification received:', payload);
+        const match = payload.payload;
+        
+        // check if this match involves the current user
+        if (match.user1_id === user.id || match.user2_id === user.id) {
+          console.log('Broadcast match involves current user, processing...');
+          handleMatchFound(match);
+        } else {
+          console.log('Broadcast match does not involve current user, ignoring...');
+        }
+      })
+      .subscribe((status) => {
+        console.log('Broadcast Subscription status:', status);
+      });
 
     return () => {
-      supabase.removeChannel(channel);
+      console.log('Cleaning up real-time subscriptions for user:', user.id);
+      supabase.removeChannel(dbChannel);
+      supabase.removeChannel(broadcastChannel);
     };
   }, [user, handleMatchFound]);
 
@@ -205,5 +294,8 @@ export function useMatchHandling({ user }: UseMatchHandlingProps) {
     setSuccess,
     setMatchedUser,
     handleQRScanSuccess,
+    matchedHours,
+    isHourMatched,
+    fetchMatchedHours,
   };
 }

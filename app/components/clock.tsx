@@ -32,6 +32,8 @@ export default function Clock() {
     setSuccess,
     setMatchedUser,
     handleQRScanSuccess,
+    isHourMatched,
+    fetchMatchedHours,
   } = useMatchHandling({ user });
 
   useEffect(() => {
@@ -63,6 +65,13 @@ export default function Clock() {
     userCreationAttempted,
     createOrUpdateUser,
   ]);
+
+  // fetch matched hours when component mounts
+  useEffect(() => {
+    if (user) {
+      fetchMatchedHours();
+    }
+  }, [user, fetchMatchedHours]);
 
   // switch to matched mode when a match is found
   useEffect(() => {
@@ -109,8 +118,7 @@ export default function Clock() {
           <p className="text-red-600 mb-4">{authError}</p>
           <button
             onClick={() => window.location.reload()}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-          >
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
             Retry
           </button>
         </div>
@@ -176,20 +184,19 @@ export default function Clock() {
                 user={user}
                 selectedTime={selectedTime}
                 onTimeSelect={setSelectedTime}
+                isHourMatched={isHourMatched}
               />
 
               {selectedTime && (
                 <div className="mt-6 flex justify-center space-x-4">
                   <button
                     onClick={() => setMode("show-qr")}
-                    className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-                  >
+                    className="px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
                     Generate QR Code
                   </button>
                   <button
                     onClick={() => setMode("scan-qr")}
-                    className="px-6 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-                  >
+                    className="px-6 py-2 bg-green-500 text-white rounded hover:bg-green-600">
                     Scan QR Code
                   </button>
                 </div>

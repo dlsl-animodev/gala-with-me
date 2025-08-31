@@ -8,7 +8,28 @@ A Next.js application where users can match with others by selecting their prefe
 - Interactive clock interface for time selection
 - QR code generation and scanning for matching
 - Real-time match notifications
+- **Live Match View** - Real-time display for assemblies/events
 - Supabase database integration
+
+## Live Match View
+
+Perfect for assemblies, events, or presentations! The live match view displays all matches in real-time on a big screen.
+
+### Access URLs:
+- **Admin View:** `http://localhost:3000/admin`
+
+### Features:
+- 🎨 **Beautiful gradient background** - Perfect for presentations
+- 📊 **Real-time updates** - New matches appear automatically with animations
+- 💕 **Visual match cards** - Shows matched users, departments, and agreed time
+- 🕐 **Color-coded times** - Each hour has a unique color
+- ⏰ **Last updated timestamp** - Shows when data was last refreshed
+- ✨ **New match animations** - Highlights new matches with pulse effects
+
+### Usage:
+1. Open the live view URL on a computer connected to a projector/TV
+2. The page will automatically refresh when new matches occur
+3. No interaction needed - perfect for passive display during events
 
 ## Setup
 
@@ -70,6 +91,12 @@ CREATE TABLE matches (
 4. **QR Code Scanning:** Users can scan another person's QR code to attempt a match
 5. **Matching:** If both users selected the same time, a match is created in the database
 6. **Real-time Updates:** Users are notified of matches in real-time via Supabase subscriptions
+7. **Live Display:** Administrators can display the live match view (`/live` or `/admin`) on screens for everyone to see
+
+### Quick Access
+- **Players:** Main app at `/` 
+- **Live View:** `/live` or `/admin` for real-time match display
+- **Live View Button:** Available in the main app header for easy access
 
 ## Technologies Used
 
