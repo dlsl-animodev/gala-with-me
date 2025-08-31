@@ -30,7 +30,14 @@ export default function RegistrationPage() {
       if (data.email_address && data.partner_id) {
         const newStudent = {
           id: data.partner_id,
-          name: data.email_address.split("@")[0].replace("_", " "),
+          name: data.email_address
+            .split("@")[0]
+            .split("_")
+            .map(
+              (part: string) =>
+                part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()
+            )
+            .join(" "),
           department: data.department || "Unknown",
         };
 
