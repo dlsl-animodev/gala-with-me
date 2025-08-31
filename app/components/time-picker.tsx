@@ -37,18 +37,15 @@ export default function TimePicker({
   };
 
   const handleHourSelect = (hour: number) => {
-    // Create a dayjs object with the selected hour (using today's date)
     const time = dayjs().hour(hour).minute(0).second(0);
     onTimeSelect(time);
 
-    // Store as 1-12 format directly (much simpler!)
     updatePreferredTime(hour);
   };
 
   const getSelectedHour = () => {
     if (!selectedTime) return null;
     const hour = selectedTime.hour();
-    // Convert 24-hour to 12-hour format for display
     return hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
   };
 
@@ -99,13 +96,13 @@ export default function TimePicker({
           </div>
 
           {/* Center hub with retro styling */}
-          <div className="absolute top-1/2 left-1/2 w-6 h-6 bg-gradient-to-br from-orange-500 to-amber-600 rounded-full transform -translate-x-1/2 -translate-y-1/2 z-20 shadow-lg border-2 border-white animate-pulse"></div>
+          <div className="absolute top-1/2 left-1/2 w-6 h-6 bg-gradient-to-br from-orange-500 to-amber-600 rounded-full transform -translate-x-1/2 -translate-y-1/2 z-10 shadow-lg border-2 border-white animate-pulse"></div>
 
           {/* Hour numbers with retro styling */}
           {hours.map((hour, index) => {
             const angle = index * 30 - 90; // 30 degrees per hour, starting from 12 o'clock
             const radian = (angle * Math.PI) / 180;
-            const radius = 100; // Distance from center (reduced for mobile)
+            const radius = 100; // distance from center
             const x = Math.cos(radian) * radius;
             const y = Math.sin(radian) * radius;
 
@@ -113,39 +110,42 @@ export default function TimePicker({
             const isMatched = isHourMatched ? isHourMatched(hour) : false;
 
             return (
-              <button
+              <div
                 key={hour}
-                onClick={() => !isMatched && handleHourSelect(hour)}
-                disabled={isMatched}
-                className={`
-                  absolute w-10 h-10 sm:w-12 sm:h-12 rounded-full font-black text-sm sm:text-lg transition-all duration-300 transform -translate-x-1/2 -translate-y-1/2 z-10
-                  ${
-                    isMatched
-                      ? "bg-gradient-to-br from-gray-300 to-gray-400 text-gray-500 cursor-not-allowed opacity-60 shadow-inner"
-                      : isSelected
-                      ? "bg-gradient-to-br from-orange-500 to-amber-600 text-white shadow-xl scale-125 animate-bounce border-2 border-white"
-                      : "bg-gradient-to-br from-white to-orange-100 text-orange-800 border-2 border-orange-300 hover:border-orange-500 hover:from-orange-200 hover:to-amber-200 hover:scale-110 shadow-lg hover:shadow-xl transform hover:rotate-3"
-                  }
-                `}
+                className="absolute z-30 hour-button-container"
                 style={{
                   left: `calc(50% + ${x}px)`,
                   top: `calc(50% + ${y}px)`,
-                }}
-                title={
-                  isMatched
-                    ? `${hour}:00 - Already matched! 🎉`
-                    : `Select ${hour}:00 ⏰`
-                }
-              >
-                {hour}
-                {isMatched && (
-                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full animate-ping">
-                    <div className="absolute inset-0 w-4 h-4 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center">
-                      <span className="text-white text-xs font-bold">✓</span>
+                  transform: "translate(-50%, -50%)",
+                }}>
+                <button
+                  onClick={() => !isMatched && handleHourSelect(hour)}
+                  disabled={isMatched}
+                  className={`
+                    w-10 h-10 sm:w-12 sm:h-12 rounded-full font-black text-sm sm:text-lg transition-all duration-300 relative
+                    ${
+                      isMatched
+                        ? "bg-gradient-to-br from-gray-300 to-gray-400 text-gray-500 cursor-not-allowed opacity-60 shadow-inner"
+                        : isSelected
+                        ? "bg-gradient-to-br from-orange-500 to-amber-600 text-white shadow-xl border-2 border-white hour-button-selected"
+                        : "bg-gradient-to-br from-white to-orange-100 text-orange-800 border-2 border-orange-300 hover:border-orange-500 hover:from-orange-200 hover:to-amber-200 hover:scale-110 shadow-lg hover:shadow-xl"
+                    }
+                  `}
+                  title={
+                    isMatched
+                      ? `${hour}:00 - Already matched! 🎉`
+                      : `Select ${hour}:00 ⏰`
+                  }>
+                  {hour}
+                  {isMatched && (
+                    <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full animate-ping">
+                      <div className="absolute inset-0 w-4 h-4 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center">
+                        <span className="text-white text-xs font-bold">✓</span>
+                      </div>
                     </div>
-                  </div>
-                )}
-              </button>
+                  )}
+                </button>
+              </div>
             );
           })}
 
@@ -154,7 +154,7 @@ export default function TimePicker({
             <>
               {/* Glow effect for hand */}
               <div
-                className="absolute top-1/2 left-1/2 w-2 bg-orange-400 rounded-full transform-gpu origin-bottom z-15 opacity-60 animate-pulse"
+                className="absolute top-1/2 left-1/2 w-2 bg-orange-400 rounded-full origin-bottom z-10 opacity-60 animate-pulse"
                 style={{
                   height: "70px",
                   transform: `translate(-50%, -100%) rotate(${
@@ -164,7 +164,7 @@ export default function TimePicker({
               />
               {/* Main hand */}
               <div
-                className="absolute top-1/2 left-1/2 w-1 bg-gradient-to-t from-orange-600 to-amber-500 rounded-full transform-gpu origin-bottom z-16 shadow-lg"
+                className="absolute top-1/2 left-1/2 w-1 bg-gradient-to-t from-orange-600 to-amber-500 rounded-full origin-bottom z-20 shadow-lg"
                 style={{
                   height: "60px",
                   transform: `translate(-50%, -100%) rotate(${
@@ -202,8 +202,23 @@ export default function TimePicker({
           }
         }
 
+        @keyframes hour-bounce {
+          0%,
+          100% {
+            transform: scale(1);
+          }
+          50% {
+            transform: scale(1.1);
+          }
+        }
+
         .animate-float {
           animation: float 4s ease-in-out infinite;
+        }
+
+        /* Fix for hour button animations */
+        .hour-button-selected {
+          animation: hour-bounce 1s ease-in-out infinite;
         }
 
         /* Additional retro glow effects */
@@ -211,6 +226,15 @@ export default function TimePicker({
           box-shadow: 0 0 20px rgba(251, 146, 60, 0.3),
             0 0 40px rgba(251, 146, 60, 0.2),
             inset 0 0 20px rgba(255, 255, 255, 0.1);
+        }
+
+        /* Ensure consistent positioning for hour buttons */
+        .hour-button-container {
+          pointer-events: none;
+        }
+
+        .hour-button-container button {
+          pointer-events: auto;
         }
       `}</style>
     </div>

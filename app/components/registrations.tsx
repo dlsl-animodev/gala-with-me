@@ -103,7 +103,7 @@ export default function RegistrationPage() {
                     placeholder="Enter your Student ID"
                     value={studentId}
                     onChange={(e) => setStudentId(e.target.value)}
-                    className="w-full border-3 border-orange-300 focus:border-orange-500 px-4 py-3 rounded-xl text-gray-800 font-semibold text-lg placeholder-orange-300 focus:outline-none focus:ring-4 focus:ring-orange-200 transition-all duration-200 transform focus:scale-105"
+                    className="w-full border-4 border-orange-300 focus:border-orange-500 px-4 py-3 rounded-xl text-gray-800 font-semibold text-lg placeholder-orange-300 focus:outline-none focus:ring-4 focus:ring-orange-200 transition-all duration-200 transform focus:scale-105"
                     required
                     disabled={loading}
                   />
