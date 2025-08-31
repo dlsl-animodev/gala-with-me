@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "../context/auth-context";
 import { useMatchHandling } from "../hooks/useMatchHandling";
 import TimePicker from "./time-picker";
 import QRActions from "./qr-actions";
 import MatchResult from "./match-result";
 import { Dayjs } from "dayjs";
-import { Confetti, ConfettiRef } from "@/components/magicui/confetti";
+// import { Confetti, ConfettiRef } from "@/components/magicui/confetti";
 
 type Mode = "clock" | "show-qr" | "scan-qr" | "matched";
 
@@ -25,7 +25,7 @@ export default function Clock() {
   const [userCreationAttempted, setUserCreationAttempted] =
     useState<boolean>(false);
 
-  const confettiRef = useRef<ConfettiRef>(null);
+  // const confettiRef = useRef<ConfettiRef>(null);
 
   const {
     matchedUser,
@@ -305,10 +305,11 @@ export default function Clock() {
         </div>
       </div>
 
-      <Confetti
+      {/* Confetti temporarily disabled */}
+      {/* <Confetti
         ref={confettiRef}
         className="absolute left-0 top-0 z-50 size-full pointer-events-none"
-      />
+      /> */}
 
       <style jsx>{`
         @keyframes shake {
