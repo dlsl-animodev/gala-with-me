@@ -1,8 +1,8 @@
 "use client";
 
-// import { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { User } from "../live/lib/supabase";
-// import { Confetti, type ConfettiRef } from "@/components/magicui/confetti";
+import { Confetti, type ConfettiRef } from "@/components/magicui/confetti";
 
 interface MatchResultProps {
   matchedUser: User;
@@ -15,11 +15,9 @@ export default function MatchResult({
   success,
   onStartOver,
 }: MatchResultProps) {
-  // const confettiRef = useRef<ConfettiRef>(null);
+  const confettiRef = useRef<ConfettiRef>(null);
 
   // Fire confetti when component mounts (when match is found)
-  // Temporarily disabled confetti functionality
-  /* 
   useEffect(() => {
     const timer = setTimeout(() => {
       confettiRef.current?.fire({
@@ -51,15 +49,14 @@ export default function MatchResult({
 
     return () => clearTimeout(timer);
   }, []);
-  */
 
   return (
     <div className="relative flex flex-col items-center space-y-4 sm:space-y-6 h-full">
-      {/* Confetti Component - temporarily disabled */}
-      {/* <Confetti
+      {/* Confetti Component */}
+      <Confetti
         ref={confettiRef}
         className="absolute left-0 top-0 z-50 size-full pointer-events-none"
-      /> */}
+      />
 
       {/* Celebration Header */}
       <div className="text-center animate-bounce">
@@ -117,13 +114,13 @@ export default function MatchResult({
       <div className="mt-auto pt-4">
         <button
           onClick={() => {
-            // Fire one more confetti burst when starting over - temporarily disabled
-            /* confettiRef.current?.fire({
+            // Fire one more confetti burst when starting over
+            confettiRef.current?.fire({
               particleCount: 50,
               spread: 45,
               origin: { y: 0.7 },
               colors: ["#f97316", "#fb923c"],
-            }); */
+            });
             setTimeout(onStartOver, 500);
           }}
           className="px-6 py-3 sm:px-8 sm:py-4 bg-gradient-to-r from-orange-500 to-amber-600 text-white rounded-full hover:from-orange-600 hover:to-amber-700 transform hover:scale-110 hover:rotate-1 transition-all duration-300 shadow-xl font-bold text-sm sm:text-base flex items-center space-x-2 "
