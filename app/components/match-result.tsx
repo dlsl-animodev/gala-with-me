@@ -61,7 +61,7 @@ export default function MatchResult({
       {/* Celebration Header */}
       <div className="text-center animate-bounce">
         <h2 className="text-2xl sm:text-3xl md:text-4xl font-black bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent animate-pulse">
-          It's a Match!
+          It&apos;s a Match!
         </h2>
       </div>
 
