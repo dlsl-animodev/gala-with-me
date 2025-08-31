@@ -255,7 +255,7 @@ export default function Clock() {
                       </div>
 
                       {selectedTime && (
-                        <div className="mt-1 sm:mt-1 md:mt-2 flex flex-col sm:flex-row justify-center space-y-2 sm:space-y-0 sm:space-x-4 md:space-x-6 animate-slide-up">
+                        <div key={mode} className="mt-1 sm:mt-1 md:mt-2 flex flex-col sm:flex-row justify-center space-y-2 sm:space-y-0 sm:space-x-4 md:space-x-6 animate-slide-up">
                           <button
                             onClick={() => setMode("show-qr")}
                             className="px-4 py-3 sm:px-6 sm:py-3 md:px-8 md:py-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-full hover:from-blue-600 hover:to-indigo-700 transform hover:scale-110 hover:rotate-1 transition-all duration-300 shadow-xl font-bold text-sm sm:text-base md:text-lg flex items-center justify-center space-x-2">
