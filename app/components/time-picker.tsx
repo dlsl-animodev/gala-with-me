@@ -54,10 +54,10 @@ export default function TimePicker({
 
   return (
     <div className="flex flex-col items-center space-y-4 sm:space-y-6">
-      <h2 className="text-lg sm:text-xl md:text-2xl font-black text-center bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent animate-pulse">
+      <h2 className="text-lg mt-6 sm:text-xl md:text-2xl font-black text-center bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent animate-pulse">
         ⏰ Choose your preferred time! ⏰
       </h2>
-
+      <div className="h-8"></div>
       <div className="relative">
         {/* Retro clock container with glow effect */}
         <div className="relative w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 animate-float">
@@ -133,8 +133,8 @@ export default function TimePicker({
                   `}
                   title={
                     isMatched
-                      ? `${hour}:00 - Already matched! 🎉`
-                      : `Select ${hour}:00 ⏰`
+                      ? `${hour}:00 - Already matched!`
+                      : `Select ${hour}:00`
                   }>
                   {hour}
                   {isMatched && (
@@ -179,13 +179,12 @@ export default function TimePicker({
 
       {selectedTime && (
         <div className="text-center space-y-2 ">
-          <div className="bg-gradient-to-r from-orange-100 to-amber-100 rounded-full px-4 sm:px-6 py-2 sm:py-3 border-2 border-orange-300 shadow-lg">
+          <div className="bg-gradient-to-r from-orange-100 to-amber-100 rounded-full px-4 sm:px-6 py-2 sm:py-3 border-2 border-orange-300 shadow-lg mt-8">
             <p className="text-sm sm:text-lg font-bold">
-              🎯 You selected:{" "}
+              You selected:{" "}
               <span className="text-orange-600 text-lg sm:text-xl animate-pulse">
                 {selectedHour}:00
               </span>{" "}
-              🕐
             </p>
           </div>
         </div>

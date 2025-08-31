@@ -134,8 +134,7 @@ export default function Clock() {
           </p>
           <button
             onClick={() => window.location.reload()}
-            className="px-6 py-3 sm:px-8 sm:py-4 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-full hover:from-orange-600 hover:to-red-600 transform hover:scale-105 transition-all duration-300 shadow-lg text-lg sm:text-xl font-bold"
-          >
+            className="px-6 py-3 sm:px-8 sm:py-4 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-full hover:from-orange-600 hover:to-red-600 transform hover:scale-105 transition-all duration-300 shadow-lg text-lg sm:text-xl font-bold">
             🔄 Retry
           </button>
         </div>
@@ -201,9 +200,8 @@ export default function Clock() {
               </p>
               <button
                 onClick={logout}
-                className="mt-1 sm:mt-2 px-3 py-1 sm:px-4 sm:py-2 bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-full hover:from-red-600 hover:to-orange-600 transform hover:scale-105 transition-all duration-300 shadow-md font-bold text-xs sm:text-sm"
-              >
-                👋
+                className="mt-3 sm:mt-3 px-3 py-1 sm:px-4 sm:py-2 bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-full hover:from-red-600 hover:to-orange-600 transform hover:scale-105 transition-all duration-300 shadow-md font-bold text-xs sm:text-sm">
+                Log Out
               </button>
             </div>
           </div>
@@ -257,19 +255,15 @@ export default function Clock() {
                       </div>
 
                       {selectedTime && (
-                        <div className="mt-2 sm:mt-4 md:mt-6 flex flex-col sm:flex-row justify-center space-y-2 sm:space-y-0 sm:space-x-4 md:space-x-6 animate-slide-up">
+                        <div className="mt-1 sm:mt-1 md:mt-2 flex flex-col sm:flex-row justify-center space-y-2 sm:space-y-0 sm:space-x-4 md:space-x-6 animate-slide-up">
                           <button
                             onClick={() => setMode("show-qr")}
-                            className="px-4 py-3 sm:px-6 sm:py-3 md:px-8 md:py-4 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-full hover:from-blue-600 hover:to-indigo-700 transform hover:scale-110 hover:rotate-1 transition-all duration-300 shadow-xl font-bold text-sm sm:text-base md:text-lg flex items-center justify-center space-x-2"
-                          >
-                            <span>📱</span>
+                            className="px-4 py-3 sm:px-6 sm:py-3 md:px-8 md:py-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-full hover:from-blue-600 hover:to-indigo-700 transform hover:scale-110 hover:rotate-1 transition-all duration-300 shadow-xl font-bold text-sm sm:text-base md:text-lg flex items-center justify-center space-x-2">
                             <span>Generate QR</span>
                           </button>
                           <button
                             onClick={() => setMode("scan-qr")}
-                            className="px-4 py-3 sm:px-6 sm:py-3 md:px-8 md:py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-full hover:from-green-600 hover:to-emerald-700 transform hover:scale-110 hover:rotate-[-1deg] transition-all duration-300 shadow-xl font-bold text-sm sm:text-base md:text-lg flex items-center justify-center space-x-2"
-                          >
-                            <span>📷</span>
+                            className="px-4 py-3 sm:px-6 sm:py-3 md:px-8 md:py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-full hover:from-green-600 hover:to-emerald-700 transform hover:scale-110 hover:rotate-[-1deg] transition-all duration-300 shadow-xl font-bold text-sm sm:text-base md:text-lg flex items-center justify-center space-x-2">
                             <span>Scan QR</span>
                           </button>
                         </div>
