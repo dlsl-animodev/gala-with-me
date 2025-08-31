@@ -125,7 +125,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const userData = {
         student_id: student.id,
         name: student.name,
-        department: studentData.department || "Unknown",
+        department: student.department || studentData.department || "Unknown",
         preferred_time: null,
       };
 
