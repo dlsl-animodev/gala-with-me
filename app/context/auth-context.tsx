@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect } from "react";
-import { supabase, User } from "../lib/supabase";
+import { supabase, User } from "../live/lib/supabase";
 
 interface Student {
   id: string;
