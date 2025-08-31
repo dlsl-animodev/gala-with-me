@@ -1,12 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAuth } from "../context/auth-context";
 import { useMatchHandling } from "../hooks/useMatchHandling";
 import TimePicker from "./time-picker";
 import QRActions from "./qr-actions";
 import MatchResult from "./match-result";
 import { Dayjs } from "dayjs";
+import { Confetti, ConfettiRef } from "@/components/magicui/confetti";
 
 type Mode = "clock" | "show-qr" | "scan-qr" | "matched";
 
@@ -23,6 +24,8 @@ export default function Clock() {
   const [mode, setMode] = useState<Mode>("clock");
   const [userCreationAttempted, setUserCreationAttempted] =
     useState<boolean>(false);
+
+  const confettiRef = useRef<ConfettiRef>(null);
 
   const {
     matchedUser,
@@ -254,7 +257,7 @@ export default function Clock() {
                       </div>
 
                       {selectedTime && (
-                        <div className="mt-4 sm:mt-6 md:mt-8 flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4 md:space-x-6 animate-slide-up">
+                        <div className="mt-2 sm:mt-4 md:mt-6 flex flex-col sm:flex-row justify-center space-y-2 sm:space-y-0 sm:space-x-4 md:space-x-6 animate-slide-up">
                           <button
                             onClick={() => setMode("show-qr")}
                             className="px-4 py-3 sm:px-6 sm:py-3 md:px-8 md:py-4 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-full hover:from-blue-600 hover:to-indigo-700 transform hover:scale-110 hover:rotate-1 transition-all duration-300 shadow-xl font-bold text-sm sm:text-base md:text-lg flex items-center justify-center space-x-2"
@@ -287,7 +290,7 @@ export default function Clock() {
                   )}
 
                   {mode === "matched" && matchedUser && (
-                    <div className="animate-celebration h-full">
+                    <div className=" h-full">
                       <MatchResult
                         matchedUser={matchedUser}
                         success={success}
@@ -301,6 +304,11 @@ export default function Clock() {
           </div>
         </div>
       </div>
+
+      <Confetti
+        ref={confettiRef}
+        className="absolute left-0 top-0 z-50 size-full pointer-events-none"
+      />
 
       <style jsx>{`
         @keyframes shake {
