@@ -6,6 +6,7 @@ import Clock from "./clock";
 import { TextAnimate } from "@/components/magicui/text-animate";
 import Link from "next/link";
 import { HyperText } from "@/components/magicui/hyper-text";
+import { WarpBackground } from "@/components/magicui/warp-background";
 
 export default function RegistrationPage() {
   const [studentId, setStudentId] = useState("");
@@ -78,89 +79,104 @@ export default function RegistrationPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-400 via-orange-500 to-orange-600 p-4">
-      <div className="w-full max-w-md">
-        {/* Main Card */}
-        <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border-4 border-orange-300">
-          {/* Header Section */}
-          <div className="bg-gradient-to-r from-orange-500 to-orange-600 px-8 py-6 text-center">
-            <h1 className="text-3xl font-black text-white mb-2 tracking-wider transform -skew-x-2">
-              Gala With Me
-            </h1>
-            <HyperText className="text-orange-100 font-semibold text-lg">
-              Student Check-In
-            </HyperText>
-          </div>
+    <div className="relative min-h-screen w-full overflow-hidden">
+      {/* Full screen WarpBackground */}
+      <WarpBackground
+        className="absolute inset-0 w-full h-full"
+        gridColor="rgba(255, 255, 255, 0.15)"
+        beamsPerSide={4}
+        beamSize={6}
+        perspective={200}
+      />
 
-          {/* Form Section */}
-          <div className="p-8">
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Student ID Input */}
-              <div className="space-y-2">
-                <label className="block text-orange-800 font-bold text-sm uppercase tracking-wide">
-                  Student ID
-                </label>
-                <div className="relative">
-                  <input
-                    type="text"
-                    placeholder="Enter your Student ID"
-                    value={studentId}
-                    onChange={(e) => setStudentId(e.target.value)}
-                    className="w-full border-4 border-orange-300 focus:border-orange-500 px-4 py-3 rounded-xl text-gray-800 font-semibold text-lg placeholder-orange-300 focus:outline-none focus:ring-4 focus:ring-orange-200 transition-all duration-200 transform focus:scale-105"
-                    required
-                    disabled={loading}
-                  />
-                  <div className="absolute inset-0 rounded-xl border-2 border-white opacity-20 pointer-events-none"></div>
-                </div>
-              </div>
+      {/* Gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-orange-400/80 via-orange-500/80 to-orange-600/80" />
 
-              {/* Error Message */}
-              {error && (
-                <div className="bg-red-100 border-2 border-red-300 rounded-xl p-4 text-center">
-                  <p className="text-red-700 font-bold">{error}</p>
-                </div>
-              )}
+      {/* Content layer */}
+      <div className="relative z-10 min-h-screen flex items-center justify-center p-4">
+        <div className="w-full max-w-md">
+          {/* Main Card */}
+          <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl overflow-hidden border-4 border-orange-300/80">
+            {/* Header Section */}
+            <div className="bg-gradient-to-r from-orange-500 to-orange-600 px-8 py-6 text-center">
+              <h1 className="text-3xl font-black text-white mb-2 tracking-wider transform -skew-x-2">
+                Gala With Me
+              </h1>
+              <HyperText className="text-orange-100 font-semibold text-lg">
+                Student Check-In
+              </HyperText>
+            </div>
 
-              {/* Submit Button */}
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-black text-xl py-4 rounded-xl shadow-lg transform transition-all duration-200 hover:scale-105 hover:shadow-xl disabled:opacity-50 disabled:transform-none disabled:hover:scale-100 border-3 border-orange-400 uppercase tracking-wider"
-              >
-                {loading ? (
-                  <div className="flex items-center justify-center space-x-3">
-                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
-                    <span>Checking...</span>
+            {/* Form Section */}
+            <div className="p-8">
+              <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Student ID Input */}
+                <div className="space-y-2">
+                  <label className="block text-orange-800 font-bold text-sm uppercase tracking-wide">
+                    Student ID
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      placeholder="Enter your Student ID"
+                      value={studentId}
+                      onChange={(e) => setStudentId(e.target.value)}
+                      className="w-full border-4 border-orange-300 focus:border-orange-500 px-4 py-3 rounded-xl text-gray-800 font-semibold text-lg placeholder-orange-300 focus:outline-none focus:ring-4 focus:ring-orange-200 transition-all duration-200 transform focus:scale-105"
+                      required
+                      disabled={loading}
+                    />
+                    <div className="absolute inset-0 rounded-xl border-2 border-white opacity-20 pointer-events-none"></div>
                   </div>
-                ) : (
-                  "LET'S GO!"
-                )}
-              </button>
-            </form>
+                </div>
 
-            {/* Footer */}
-            <div className="mt-6 text-center">
-              <p className="text-orange-600 font-semibold text-sm">
-                Ready to find your perfect match?
-              </p>
+                {/* Error Message */}
+                {error && (
+                  <div className="bg-red-100 border-2 border-red-300 rounded-xl p-4 text-center">
+                    <p className="text-red-700 font-bold">{error}</p>
+                  </div>
+                )}
+
+                {/* Submit Button */}
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-black text-xl py-4 rounded-xl shadow-lg transform transition-all duration-200 hover:scale-105 hover:shadow-xl disabled:opacity-50 disabled:transform-none disabled:hover:scale-100 border-3 border-orange-400 uppercase tracking-wider"
+                >
+                  {loading ? (
+                    <div className="flex items-center justify-center space-x-3">
+                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                      <span>Checking...</span>
+                    </div>
+                  ) : (
+                    "LET'S GO!"
+                  )}
+                </button>
+              </form>
+
+              {/* Footer */}
+              <div className="mt-6 text-center">
+                <p className="text-orange-600 font-semibold text-sm">
+                  Ready to find your perfect match?
+                </p>
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Decorative Elements */}
-        <div className="mt-4 flex justify-center space-x-2">
-          <div className="w-3 h-3 bg-white rounded-full opacity-60"></div>
-          <div className="w-3 h-3 bg-orange-200 rounded-full opacity-80"></div>
-          <div className="w-3 h-3 bg-white rounded-full opacity-60"></div>
-        </div>
-        <div className="mt-4 pt-4 pb-2 w-full max-w-md ">
-          <TextAnimate
-            animation="blurInUp"
-            by="character"
-            className="text-white text-center scroll-m-20 text-xl font-semibold tracking-tight"
-          >
-            Developers Society
-          </TextAnimate>
+          {/* Decorative Elements */}
+          <div className="mt-4 flex justify-center space-x-2">
+            <div className="w-3 h-3 bg-white/80 rounded-full"></div>
+            <div className="w-3 h-3 bg-orange-200/90 rounded-full"></div>
+            <div className="w-3 h-3 bg-white/80 rounded-full"></div>
+          </div>
+          <div className="mt-4 pt-4 pb-2 w-full max-w-md">
+            <TextAnimate
+              animation="blurInUp"
+              by="character"
+              className="text-white/90 text-center scroll-m-20 text-xl font-semibold tracking-tight drop-shadow-lg"
+            >
+              Developers Society
+            </TextAnimate>
+          </div>
         </div>
       </div>
     </div>
