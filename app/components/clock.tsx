@@ -8,6 +8,7 @@ import QRActions from "./qr-actions";
 import MatchResult from "./match-result";
 import { Dayjs } from "dayjs";
 import { Confetti, ConfettiRef } from "@/components/magicui/confetti";
+import { Ripple } from "@/components/magicui/ripple";
 
 type Mode = "clock" | "show-qr" | "scan-qr" | "matched";
 
@@ -248,6 +249,10 @@ export default function Clock() {
                   {mode === "clock" && (
                     <div className="animate-fade-in h-full flex flex-col">
                       <div className="flex-1">
+                        <div className="mt-4">
+                          <Ripple />
+                        </div>
+
                         <TimePicker
                           user={user}
                           selectedTime={selectedTime}
