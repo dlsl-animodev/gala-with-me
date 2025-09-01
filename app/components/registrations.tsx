@@ -5,6 +5,7 @@ import { useAuth } from "../context/auth-context";
 import Clock from "./clock";
 import { TextAnimate } from "@/components/magicui/text-animate";
 import Link from "next/link";
+import { HyperText } from "@/components/magicui/hyper-text";
 
 export default function RegistrationPage() {
   const [studentId, setStudentId] = useState("");
@@ -86,9 +87,9 @@ export default function RegistrationPage() {
             <h1 className="text-3xl font-black text-white mb-2 tracking-wider transform -skew-x-2">
               Gala With Me
             </h1>
-            <p className="text-orange-100 font-semibold text-lg">
+            <HyperText className="text-orange-100 font-semibold text-lg">
               Student Check-In
-            </p>
+            </HyperText>
           </div>
 
           {/* Form Section */}
@@ -156,7 +157,7 @@ export default function RegistrationPage() {
           <TextAnimate
             animation="blurInUp"
             by="character"
-            className="text-white text-center leading-7 [&:not(:first-child)]:mt-6"
+            className="text-white text-center scroll-m-20 text-xl font-semibold tracking-tight"
           >
             Developers Society
           </TextAnimate>
