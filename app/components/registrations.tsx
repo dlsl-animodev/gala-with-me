@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useAuth } from "../context/auth-context";
 import Clock from "./clock";
 import { TextAnimate } from "@/components/magicui/text-animate";
-import Link from "next/link";
 import { HyperText } from "@/components/magicui/hyper-text";
 import { WarpBackground } from "@/components/magicui/warp-background";
 
@@ -80,14 +79,15 @@ export default function RegistrationPage() {
 
   return (
     <div className="relative min-h-screen w-full overflow-hidden">
-      {/* Full screen WarpBackground */}
       <WarpBackground
         className="absolute inset-0 w-full h-full"
         gridColor="rgba(255, 255, 255, 0.15)"
         beamsPerSide={4}
         beamSize={6}
         perspective={200}
-      />
+      >
+        <div></div>
+      </WarpBackground>
 
       {/* Gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-orange-400/80 via-orange-500/80 to-orange-600/80" />
