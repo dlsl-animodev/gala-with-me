@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useImperativeHandle, forwardRef } from "react";
 import QrScanner from "qr-scanner";
 QrScanner.WORKER_PATH = "/qr-scanner-worker.min.js";
 
@@ -9,17 +9,40 @@ interface QRScannerProps {
   onScanError?: (error: string) => void;
 }
 
-export default function QRScannerComponent({
+export interface QRScannerRef {
+  stopCamera: () => void;
+}
+
+const QRScannerComponent = forwardRef<QRScannerRef, QRScannerProps>(({
   onScanSuccess,
   onScanError,
-}: QRScannerProps) {
+}, ref) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const qrScannerRef = useRef<QrScanner | null>(null);
   const [isScanning, setIsScanning] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string>("");
+  const [needsPermission, setNeedsPermission] = useState(false);
+  const [isStarting, setIsStarting] = useState(false);
+
+  const onScanSuccessRef = useRef(onScanSuccess);
+  onScanSuccessRef.current = onScanSuccess;
+  const onScanErrorRef = useRef(onScanError);
+  onScanErrorRef.current = onScanError;
+  const initializedRef = useRef(false);
+  const processingRef = useRef(false);
 
   useEffect(() => {
+    
+    if (initializedRef.current) {
+      console.log("QRScanner already initialized (StrictMode guard)");
+      return;
+    }
+
+    initializedRef.current = true;
+
+    let scanner: QrScanner | null = null;
+
     const initScanner = async () => {
       if (!videoRef.current) return;
 
@@ -31,17 +54,22 @@ export default function QRScannerComponent({
           return;
         }
 
-        const qrScanner = new QrScanner(
+  const qrScanner = new QrScanner(
           videoRef.current,
           (result) => {
             console.log("QR Code detected:", result.data);
+            // Ignore further detections while processing
+            if (processingRef.current) {
+              return;
+            }
+            processingRef.current = true;
             setIsProcessing(true);
             
             // small delay to show the loading state, then process
             setTimeout(() => {
-              onScanSuccess(result.data);
+              onScanSuccessRef.current(result.data);
               setIsProcessing(false);
-              stopScanning();
+              processingRef.current = false;
             }, 500);
           },
           {
@@ -52,44 +80,132 @@ export default function QRScannerComponent({
         );
 
         qrScannerRef.current = qrScanner;
+        scanner = qrScanner;
         setError("");
+        
+        // start camera immediately
+        try {
+          setIsStarting(true);
+          await qrScanner.start();
+
+          setIsScanning(true);
+          setNeedsPermission(false);
+          setIsStarting(false);
+
+        } catch (startError) {
+          console.error("Auto-start error:", startError);
+          setIsStarting(false);
+          const errorMessage = startError instanceof Error ? startError.message : "Auto-start failed";
+          
+          if (errorMessage.includes("Permission") || errorMessage.includes("NotAllowed") || errorMessage.includes("NotReadableError") || errorMessage.includes("aborted")) {
+            console.log("Permission required");
+            setNeedsPermission(true);
+          } else {
+            console.log("Setting permission required as fallback");
+            setNeedsPermission(true);
+          }
+        }
       } catch (err) {
         console.error("Scanner initialization error:", err);
         setError("Failed to initialize camera");
-        onScanError?.("Failed to initialize camera");
+        onScanErrorRef.current?.("Failed to initialize camera");
       }
     };
 
     initScanner();
 
+    const videoEl = videoRef.current;
+
     return () => {
+      // here we stop/destroy qrscanner ref
       if (qrScannerRef.current) {
-        qrScannerRef.current.destroy();
+        try { qrScannerRef.current.stop(); } catch {}
+        try { qrScannerRef.current.destroy(); } catch {}
+        qrScannerRef.current = null;
+      }
+      // stop/destroy local scanner handle as a fallback
+      if (scanner) {
+        try { scanner.stop(); } catch {}
+        try { scanner.destroy(); } catch {}
+        scanner = null;
+      }
+      // here we hard-stop any leftover media tracks on the video element
+      if (videoEl) {
+        const stream = (videoEl.srcObject as MediaStream | null) ?? null;
+        if (stream) {
+          try { stream.getTracks().forEach(t => { try { t.stop(); } catch {} }); } catch {}
+          try { (videoEl as HTMLVideoElement).srcObject = null; } catch {}
+        }
       }
     };
-  }, [onScanSuccess, onScanError]);
+  }, []);
 
   const startScanning = async () => {
-    if (!qrScannerRef.current) return;
+    if (!qrScannerRef.current || isStarting) {
+      console.log("Scanner not available or already starting");
+      return;
+    }
 
     try {
-      await qrScannerRef.current.start();
-      setIsScanning(true);
+      setIsStarting(true);
+      setNeedsPermission(false);
       setError("");
+      
+      try {
+        // make sure na qr scanner is stopped first b4 scanning
+        qrScannerRef.current.stop();
+      } catch (stopError) {
+        console.log("No previous instance to stop:", stopError);
+      }
+      
+      // small delay to ensure cleanup
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
+      await qrScannerRef.current.start();
+
+      setIsScanning(true);
+      setIsStarting(false);
+
     } catch (err) {
       console.error("Start scanning error:", err);
-      setError("Failed to start camera");
-      onScanError?.("Failed to start camera");
+      setIsStarting(false);
+      const errorMessage = err instanceof Error ? err.message : "Failed to start camera";
+      
+      if (errorMessage.includes("Permission") || errorMessage.includes("NotAllowed") || errorMessage.includes("NotReadableError") || errorMessage.includes("aborted")) {
+        console.log("Permission still required or operation aborted");
+        setNeedsPermission(true);
+        setError("");
+      } else {
+        console.log("Other error:", errorMessage);
+        setError("Failed to start camera");
+        onScanErrorRef.current?.("Failed to start camera");
+      }
     }
   };
 
-  const stopScanning = () => {
+  const stopCamera = () => {
+    console.log("stopCamera called");
+
     if (qrScannerRef.current) {
+      console.log("Stopping and destroying scanner");
+
       qrScannerRef.current.stop();
+      qrScannerRef.current.destroy();
+      qrScannerRef.current = null;
+
       setIsScanning(false);
       setIsProcessing(false);
+      setNeedsPermission(false);
+      setIsStarting(false);
+    } else {
+      console.log("No scanner to stop");
     }
   };
+
+  // Expose stopCamera to parent component
+  useImperativeHandle(ref, () => ({
+    stopCamera
+  }));
 
   if (error) {
     return (
@@ -117,11 +233,24 @@ export default function QRScannerComponent({
           playsInline
           muted
         />
-        {!isScanning && !isProcessing && (
+        {(!isScanning && !isProcessing && !needsPermission) && (
           <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded">
             <p className="text-white text-center text-xs sm:text-sm">
-              Click Start Scanning to begin
+              {isStarting ? "Starting camera..." : "Initializing camera..."}
             </p>
+          </div>
+        )}
+        {needsPermission && !isScanning && (
+          <div className="absolute inset-0 bg-black bg-opacity-50 flex flex-col items-center justify-center rounded p-4">
+            <p className="text-white text-center text-xs sm:text-sm mb-4">
+              Camera permission required
+            </p>
+            <button
+              onClick={startScanning}
+              disabled={isStarting}
+              className="px-3 py-1.5 bg-green-500 text-white rounded-full hover:bg-green-600 text-xs sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed">
+              {isStarting ? "Starting..." : "Allow Camera Access"}
+            </button>
           </div>
         )}
         {isProcessing && (
@@ -134,29 +263,13 @@ export default function QRScannerComponent({
         )}
       </div>
 
-      <div className="flex space-x-2">
-        {!isScanning ? (
-          <button
-            onClick={startScanning}
-            disabled={isProcessing}
-            className="px-3 py-1.5 bg-green-500 text-white rounded-full hover:bg-green-600 text-xs sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Start Scanning
-          </button>
-        ) : (
-          <button
-            onClick={stopScanning}
-            disabled={isProcessing}
-            className="px-3 py-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 text-xs sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Stop Scanning
-          </button>
-        )}
-      </div>
-
       <p className="text-xs text-gray-600 text-center">
         Point camera at QR code
       </p>
     </div>
   );
-}
+});
+
+QRScannerComponent.displayName = "QRScannerComponent";
+
+export default QRScannerComponent;
