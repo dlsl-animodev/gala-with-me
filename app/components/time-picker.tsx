@@ -2,7 +2,13 @@
 
 import { Dayjs } from "dayjs";
 import dayjs from "dayjs";
-import { supabase, User } from "../live/lib/supabase";
+import { useState } from "react";
+import { supabase, Match, User } from "../live/lib/supabase";
+
+interface MatchWithUsers extends Match {
+  user1: User;
+  user2: User;
+}
 
 interface TimePickerProps {
   user: User | null;
@@ -18,6 +24,7 @@ export default function TimePicker({
   isHourMatched,
 }: TimePickerProps) {
   const updatePreferredTime = async (time: number) => {
+
     if (!user) return;
 
     try {
@@ -52,10 +59,47 @@ export default function TimePicker({
   const hours = [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
   const selectedHour = getSelectedHour();
 
-  const handlePopModal = () => {
-    //if user has a match in the selected
-    
-  }
+     const [showModal, setShowModal] = useState(false);
+    const [matchedPair, setMatchedPair] = useState<MatchWithUsers | null>(null);
+
+  const handlePopModal = async (hour: number) => {
+    if (!isHourMatched || !isHourMatched(hour)) return;
+
+    try {
+      // fetch the match for this user at the selected hour
+      const { data: matchData, error } = await supabase
+        .from("matches")
+        .select("*")
+        .or(`user1_id.eq.${user?.id},user2_id.eq.${user?.id}`)
+        .eq("agreed_time", hour)
+        .single();
+
+      if (error || !matchData) {
+        console.error("No match found:", error);
+        return;
+      }
+
+      // fetch user details for both sides
+      const { data: user1Data } = await supabase
+        .from("users")
+        .select("*")
+        .eq("id", matchData.user1_id)
+        .single();
+
+      const { data: user2Data } = await supabase
+        .from("users")
+        .select("*")
+        .eq("id", matchData.user2_id)
+        .single();
+
+      if (user1Data && user2Data) {
+        setMatchedPair({ ...matchData, user1: user1Data, user2: user2Data });
+        setShowModal(true);
+      }
+    } catch (err) {
+      console.error("Error fetching match details:", err);
+    }
+  };
 
   return (
     <div className="flex flex-col items-center space-y-4 sm:space-y-6">
@@ -125,8 +169,13 @@ export default function TimePicker({
                 }}
               >
                 <button
-                  onClick={() => !isMatched && handleHourSelect(hour)}
-                
+                  onClick={() => {
+                    if (isMatched) {
+                      handlePopModal(hour);
+                    } else {
+                      handleHourSelect(hour);
+                    }
+                  }}
                   className={`
                     w-10 h-10 sm:w-12 sm:h-12 rounded-full font-black text-sm sm:text-lg transition-all duration-300 relative
                     ${
@@ -243,6 +292,54 @@ export default function TimePicker({
           pointer-events: auto;
         }
       `}</style>
+      {showModal && matchedPair && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+          <div className="bg-white rounded-3xl shadow-2xl p-6 w-96 animate-pop">
+            <h3 className="text-xl font-bold text-orange-600 mb-6 text-center">
+              🎉 You’ve got a match!
+            </h3>
+
+            <div className="space-y-4">
+              {/* User 1 */}
+              <div className="bg-gradient-to-r from-orange-100 to-amber-100 rounded-xl p-3 text-center border border-orange-200">
+                <p className="text-orange-900 font-bold">
+                  {matchedPair.user1.name}
+                </p>
+              </div>
+
+              <div className="flex justify-center">
+                <div className="w-8 h-8 bg-gradient-to-r from-red-500 to-pink-500 rounded-full flex items-center justify-center shadow-lg animate-pulse"></div>
+              </div>
+
+              {/* User 2 */}
+              <div className="bg-gradient-to-r from-orange-100 to-amber-100 rounded-xl p-3 text-center border border-orange-200">
+                <p className="text-orange-900 font-bold">
+                  {matchedPair.user2.name}
+                </p>
+              </div>
+            </div>
+
+            {/* Hour */}
+            <div className="text-center mt-6">
+              <div className="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-4 py-2 rounded-full shadow-lg">
+                <span className="font-bold">
+                  ⏰ {matchedPair.agreed_time}:00
+                </span>
+              </div>
+            </div>
+
+            {/* Close */}
+            <div className="mt-6 flex justify-center">
+              <button
+                onClick={() => setShowModal(false)}
+                className="px-5 py-2 rounded-lg bg-gradient-to-r from-orange-500 to-amber-600 text-white font-semibold shadow hover:scale-105 transition"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
