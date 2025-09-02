@@ -100,18 +100,18 @@ export default function QRScannerComponent({
   }
 
   return (
-    <div className="flex flex-col items-center space-y-4">
-      <div className="relative">
+    <div className="flex flex-col items-center space-y-2 w-full">
+      <div className="relative w-full max-w-[230px] max-h-[230px] sm:max-w-[260px] sm:max-h-[260px]">
         <video
           ref={videoRef}
-          className="w-64 h-64 border rounded object-cover"
+          className="w-full h-full aspect-square border rounded object-cover"
           autoPlay
           playsInline
           muted
         />
         {!isScanning && (
           <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded">
-            <p className="text-white text-center">
+            <p className="text-white text-center text-xs sm:text-sm">
               Click Start Scanning to begin
             </p>
           </div>
@@ -122,22 +122,22 @@ export default function QRScannerComponent({
         {!isScanning ? (
           <button
             onClick={startScanning}
-            className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+            className="px-3 py-1.5 bg-green-500 text-white rounded-full hover:bg-green-600 text-xs sm:text-sm"
           >
             Start Scanning
           </button>
         ) : (
           <button
             onClick={stopScanning}
-            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+            className="px-3 py-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 text-xs sm:text-sm"
           >
             Stop Scanning
           </button>
         )}
       </div>
 
-      <p className="text-sm text-gray-600 text-center">
-        Point your camera at a QR code to scan
+      <p className="text-xs text-gray-600 text-center">
+        Point camera at QR code
       </p>
     </div>
   );
