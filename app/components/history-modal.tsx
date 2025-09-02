@@ -1,0 +1,1 @@
+//create a function to show the modal which contains the match of the user in that specific clock
