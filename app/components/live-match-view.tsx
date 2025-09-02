@@ -17,6 +17,9 @@ export default function LiveMatchView() {
     null
   );
 
+  // NEW: selected filter hour (1..12) or 'all'
+  const [filterHour, setFilterHour] = useState<number | "all">("all");
+
   // fetch all matches with user details
   const fetchMatches = async () => {
     try {
@@ -128,6 +131,55 @@ export default function LiveMatchView() {
     });
   };
 
+  // Utility: try to extract an hour number (0-23) from various possible formats,
+  // then normalize it to 1..12 for display/filtering
+  const getHourFromMatch = (match: MatchWithUsers): number => {
+    const raw = (match as any).agreed_time;
+
+    // If it's a number, assume it's an hour or 24-hour hour integer
+    if (typeof raw === "number" && Number.isFinite(raw)) {
+      return Number(raw);
+    }
+
+    // If string: try to parse leading number (handles "13", "13:00", "13:00:00", ISO strings)
+    if (typeof raw === "string") {
+      // try ISO parse first
+      const maybeDate = new Date(raw);
+      if (!isNaN(maybeDate.getTime())) {
+        return maybeDate.getHours();
+      }
+
+      // otherwise parse leading integer
+      const matchDigits = raw.match(/(\d{1,2})/);
+      if (matchDigits) {
+        return Number(matchDigits[1]);
+      }
+    }
+
+    // If it's a Date-like object
+    if (raw instanceof Date && !isNaN(raw.getTime())) {
+      return raw.getHours();
+    }
+
+    // fallback: return NaN sentinel
+    return NaN as unknown as number;
+  };
+
+  // normalize 0-23 hour to 1..12 (1 AM..12 PM style)
+  const hourTo12 = (hour24: number): number => {
+    if (!Number.isFinite(hour24)) return NaN as unknown as number;
+    const h = hour24 % 12;
+    return h === 0 ? 12 : h;
+  };
+
+  // Filtered matches based on filterHour
+  const filteredMatches = matches.filter((m) => {
+    if (filterHour === "all") return true;
+    const h24 = getHourFromMatch(m);
+    const h12 = hourTo12(h24);
+    return h12 === filterHour;
+  });
+
   // Get random position for floating match cards with more spread
   const getRandomPosition = (index: number, totalCount: number) => {
     // Generate positions in a grid-like pattern but with random offsets
@@ -147,7 +199,7 @@ export default function LiveMatchView() {
     };
   };
 
-  // Calculate card size based on number of matches
+  // Calculate card size based on number of matches (use filtered count so layout responds to filter)
   const getCardScale = (matchCount: number) => {
     if (matchCount <= 5) return "scale-100"; // Large cards
     if (matchCount <= 10) return "scale-90"; // Medium-large cards
@@ -171,7 +223,7 @@ export default function LiveMatchView() {
     return rotations[index % rotations.length];
   };
 
-  // Determine how many cards to display
+  // Determine how many cards to display (based on filteredMatches)
   const getDisplayCount = (totalCount: number) => {
     if (totalCount <= 20) return totalCount;
     if (totalCount <= 50) return Math.min(30, totalCount);
@@ -179,9 +231,9 @@ export default function LiveMatchView() {
     return 50; // Max 50 cards displayed for 100+ matches
   };
 
-  const cardScale = getCardScale(totalMatches);
-  const fontSizeClass = getFontSizeClass(totalMatches);
-  const displayCount = getDisplayCount(totalMatches);
+  const cardScale = getCardScale(filteredMatches.length);
+  const fontSizeClass = getFontSizeClass(filteredMatches.length);
+  const displayCount = getDisplayCount(filteredMatches.length);
 
   if (loading) {
     return (
@@ -241,6 +293,34 @@ export default function LiveMatchView() {
               <p className="text-orange-600 text-lg mt-2">
                 Last updated: {lastUpdated.toLocaleTimeString()}
               </p>
+
+              {/* NEW: compact hour filter (1..12) */}
+              <div className="mt-3 flex items-center justify-end space-x-2">
+                <label className="text-orange-700 font-medium mr-2">
+                  Filter:
+                </label>
+                <select
+                  value={filterHour === "all" ? "all" : String(filterHour)}
+                  onChange={(e) =>
+                    setFilterHour(
+                      e.target.value === "all"
+                        ? "all"
+                        : (Number(e.target.value) as number)
+                    )
+                  }
+                  className="rounded-full px-4 py-2 text-lg font-semibold bg-white border border-orange-200 shadow-sm"
+                >
+                  <option value="all">All</option>
+                  {Array.from({ length: 12 }, (_, i) => {
+                    const hour = i + 1;
+                    return (
+                      <option key={hour} value={String(hour)}>
+                        {hour}:00
+                      </option>
+                    );
+                  })}
+                </select>
+              </div>
             </div>
           </div>
         </div>
@@ -248,12 +328,13 @@ export default function LiveMatchView() {
 
       {/* Main Content Area */}
       <div className="pt-40 pb-20 px-8 h-full relative">
-        {matches.length > 0 ? (
+        {filteredMatches.length > 0 ? (
           <div className="relative h-full">
-            {matches.slice(0, displayCount).map((match, index) => {
+            {filteredMatches.slice(0, displayCount).map((match, index) => {
               const position = getRandomPosition(index, displayCount);
               const rotation = getRandomRotation(index);
               const isNewMatch = newMatchAnimation === match.id;
+              const displayHour = hourTo12(getHourFromMatch(match));
 
               return (
                 <div
@@ -317,7 +398,7 @@ export default function LiveMatchView() {
                     <div className="text-center mt-4">
                       <div className="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-4 py-2 rounded-full shadow-lg">
                         <span className="font-bold">
-                          ⏰ {formatTime(match.agreed_time)}
+                          ⏰ {formatTime(displayHour)}
                         </span>
                       </div>
                       <p className="text-orange-600 opacity-80 mt-2">
@@ -330,10 +411,10 @@ export default function LiveMatchView() {
             })}
 
             {/* Overflow indicator for hidden matches */}
-            {matches.length > displayCount && (
+            {filteredMatches.length > displayCount && (
               <div className="absolute bottom-8 right-8 bg-white/90 backdrop-blur-md rounded-full px-6 py-3 shadow-xl border-2 border-orange-300 animate-bounce z-50">
                 <span className="text-orange-700 font-bold text-lg">
-                  +{matches.length - displayCount} more matches! 🎊
+                  +{filteredMatches.length - displayCount} more matches! 🎊
                 </span>
               </div>
             )}
