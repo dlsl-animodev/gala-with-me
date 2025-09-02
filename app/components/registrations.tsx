@@ -78,7 +78,7 @@ export default function RegistrationPage() {
   }
 
   return (
-    <div className="relative min-h-screen w-full overflow-hidden">
+    <div className="relative min-h-screen w-full overflow-hidden h-screen">
       <WarpBackground
         className="absolute inset-0 w-full h-full"
         gridColor="rgba(255, 255, 255, 0.15)"

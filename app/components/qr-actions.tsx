@@ -36,9 +36,17 @@ export default function QRActions({
   if (mode === "show-qr") {
     return (
       <div className="flex flex-col items-center space-y-12">
-        <h2 className="text-2xl font-bold text-center mt-5">Your QR Code</h2>
+        <div>
+          <h2 className="text-2xl font-bold text-center mt-5 mb-3">
+            Your QR Code
+          </h2>
+          <code className="bg-muted relative rounded px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold ">
+            You selected: {selectedTime?.hour()} o&apos;clock
+          </code>
+        </div>
         <p className="text-center text-gray-600">
-          Share this QR code with someone you want to match with who selected the same time
+          Share this QR code with someone you want to match with who selected
+          the same time
         </p>
 
         <QRCodeDisplay value={getQRCodeData()} />
@@ -56,7 +64,10 @@ export default function QRActions({
   if (mode === "scan-qr") {
     return (
       <div className="flex flex-col items-center space-y-9">
-        <h2 className="text-2xl font-bold text-center mt-5">Scan QR Code</h2>
+        <h2 className="text-2xl font-bold text-center mt-5">Scan QR Codes</h2>
+        <h2 className="text-2xl font-bold text-center mt-5">
+          {selectedTime?.hour()}kjlkjkj
+        </h2>
         <p className="text-center text-gray-600">
           Scan someone&apos;s QR code to see if you have matching times
         </p>
