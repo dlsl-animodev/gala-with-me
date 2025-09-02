@@ -117,7 +117,8 @@ export default function TimePicker({
                   left: `calc(50% + ${x}px)`,
                   top: `calc(50% + ${y}px)`,
                   transform: "translate(-50%, -50%)",
-                }}>
+                }}
+              >
                 <button
                   onClick={() => !isMatched && handleHourSelect(hour)}
                   disabled={isMatched}
@@ -135,7 +136,8 @@ export default function TimePicker({
                     isMatched
                       ? `${hour}:00 - Already matched!`
                       : `Select ${hour}:00`
-                  }>
+                  }
+                >
                   {hour}
                   {isMatched && (
                     <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full animate-ping">
@@ -183,7 +185,7 @@ export default function TimePicker({
             <p className="text-sm sm:text-lg font-bold">
               You selected:{" "}
               <span className="text-orange-600 text-lg sm:text-xl animate-pulse">
-                {selectedHour}:00
+                {selectedHour}:00 o&apos;clock
               </span>{" "}
             </p>
           </div>
