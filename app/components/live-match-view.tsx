@@ -292,9 +292,8 @@ export default function LiveMatchView() {
                         <p className="text-orange-900 font-bold">
                           {match.user1.name}
                         </p>
-                        <p className="text-orange-700 opacity-80"></p>
                       </div>
-
+                        
                       <div className="flex justify-center">
                         <div className="w-8 h-8 bg-gradient-to-r from-red-500 to-pink-500 rounded-full flex items-center justify-center shadow-lg animate-pulse"></div>
                       </div>
@@ -302,8 +301,6 @@ export default function LiveMatchView() {
                       <div className="bg-gradient-to-r from-orange-100 to-amber-100 rounded-xl p-3 text-center border border-orange-200">
                         <p className="text-orange-900 font-bold">
                           {match.user2.name}
-                        </p>
-                        <p className="text-orange-700 opacity-80"></p>
                       </div>
                     </div>
 
