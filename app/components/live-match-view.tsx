@@ -254,9 +254,6 @@ export default function LiveMatchView() {
                         <p className="text-orange-900 font-bold text-lg">
                           {match.user1.name}
                         </p>
-                        <p className="text-orange-700 text-xs">
-                          {match.user1.department}
-                        </p>
                       </div>
 
                       <div className="flex justify-center">
@@ -268,9 +265,6 @@ export default function LiveMatchView() {
                       <div className="bg-gradient-to-r from-orange-100 to-amber-100 rounded-xl p-3 text-center border border-orange-200">
                         <p className="text-orange-900 font-bold text-lg">
                           {match.user2.name}
-                        </p>
-                        <p className="text-orange-700 text-xs">
-                          {match.user2.department}
                         </p>
                       </div>
                     </div>
