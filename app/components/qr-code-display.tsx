@@ -8,7 +8,10 @@ interface QRCodeDisplayProps {
   size?: number;
 }
 
-export default function QRCodeDisplay({ value, size = 256 }: QRCodeDisplayProps) {
+export default function QRCodeDisplay({
+  value,
+  size = 220,
+}: QRCodeDisplayProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [error, setError] = useState<string>("");
 
@@ -44,10 +47,12 @@ export default function QRCodeDisplay({ value, size = 256 }: QRCodeDisplayProps)
   }
 
   return (
-    <div className="flex flex-col items-center space-y-4">
-      <canvas ref={canvasRef} className="border rounded" />
-      <p className="text-sm text-gray-600 text-center">
-        Show this QR code to someone you want to match with
+    <div className="flex flex-col items-center space-y-2">
+      <div className="max-w-[220px] max-h-[220px] sm:max-w-[240px] sm:max-h-[240px]">
+        <canvas ref={canvasRef} className="border rounded w-full h-auto" />
+      </div>
+      <p className="text-xs sm:text-sm text-gray-600 text-center px-2">
+        Show this QR code to match
       </p>
     </div>
   );
