@@ -212,15 +212,32 @@ export default function Clock() {
 
           {/* Error Display - Compact */}
           {error && (
-            <div className="mb-3 sm:mb-4 md:mb-6 animate-shake">
-              <div className="p-3 sm:p-4 md:p-6 bg-gradient-to-r from-red-100 to-orange-100 border-2 sm:border-4 border-red-400 text-red-800 rounded-2xl sm:rounded-3xl shadow-lg backdrop-blur-sm">
-                <div className="flex items-center">
-                  <span className="text-lg sm:text-xl md:text-2xl mr-2 sm:mr-3 animate-bounce">
-                    ❌
-                  </span>
-                  <span className="font-bold text-sm sm:text-base md:text-lg truncate">
-                    {error}
-                  </span>
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in">
+              {/* Backdrop */}
+              <div
+                className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+                onClick={() => setError("")}
+              ></div>
+
+              {/* Modal content */}
+              <div className="relative z-10 w-full max-w-md transform animate-shake">
+                <div className="p-4 sm:p-5 md:p-6 bg-gradient-to-r from-red-100 to-orange-100 border-2 sm:border-4 border-red-400 text-red-800 rounded-2xl sm:rounded-3xl shadow-xl">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center flex-1">
+                      <span className="text-lg sm:text-xl md:text-2xl mr-2 sm:mr-3 animate-bounce">
+                        ❌
+                      </span>
+                      <span className="font-bold text-sm sm:text-base md:text-lg">
+                        {error}
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => setError("")}
+                      className="text-red-700 hover:text-red-900 ml-4"
+                    >
+                      <span className="text-xl">×</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
