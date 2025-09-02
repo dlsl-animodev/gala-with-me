@@ -65,9 +65,9 @@ export default function QRActions({
     return (
       <div className="flex flex-col items-center space-y-9">
         <h2 className="text-2xl font-bold text-center mt-5">Scan QR Codes</h2>
-        <h2 className="text-2xl font-bold text-center mt-5">
-          {selectedTime?.hour()}kjlkjkj
-        </h2>
+        <code className="bg-muted relative rounded px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold ">
+          You selected: {selectedTime?.hour()} o&apos;clock
+        </code>
         <p className="text-center text-gray-600">
           Scan someone&apos;s QR code to see if you have matching times
         </p>

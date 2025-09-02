@@ -8,7 +8,6 @@ import QRActions from "./qr-actions";
 import MatchResult from "./match-result";
 import { Dayjs } from "dayjs";
 import { Confetti, ConfettiRef } from "@/components/magicui/confetti";
-import { Ripple } from "@/components/magicui/ripple";
 import { DotPattern } from "@/components/magicui/dot-pattern";
 
 type Mode = "clock" | "show-qr" | "scan-qr" | "matched";
