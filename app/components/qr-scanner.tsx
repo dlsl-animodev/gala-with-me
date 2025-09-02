@@ -16,6 +16,7 @@ export default function QRScannerComponent({
   const videoRef = useRef<HTMLVideoElement>(null);
   const qrScannerRef = useRef<QrScanner | null>(null);
   const [isScanning, setIsScanning] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string>("");
 
   useEffect(() => {
@@ -34,8 +35,14 @@ export default function QRScannerComponent({
           videoRef.current,
           (result) => {
             console.log("QR Code detected:", result.data);
-            onScanSuccess(result.data);
-            stopScanning();
+            setIsProcessing(true);
+            
+            // small delay to show the loading state, then process
+            setTimeout(() => {
+              onScanSuccess(result.data);
+              setIsProcessing(false);
+              stopScanning();
+            }, 500);
           },
           {
             highlightScanRegion: true,
@@ -80,6 +87,7 @@ export default function QRScannerComponent({
     if (qrScannerRef.current) {
       qrScannerRef.current.stop();
       setIsScanning(false);
+      setIsProcessing(false);
     }
   };
 
@@ -109,10 +117,18 @@ export default function QRScannerComponent({
           playsInline
           muted
         />
-        {!isScanning && (
+        {!isScanning && !isProcessing && (
           <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded">
             <p className="text-white text-center text-xs sm:text-sm">
               Click Start Scanning to begin
+            </p>
+          </div>
+        )}
+        {isProcessing && (
+          <div className="absolute inset-0 bg-black bg-opacity-70 flex flex-col items-center justify-center rounded">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mb-2"></div>
+            <p className="text-white text-center text-xs sm:text-sm font-medium">
+              Processing QR Code...
             </p>
           </div>
         )}
@@ -122,14 +138,16 @@ export default function QRScannerComponent({
         {!isScanning ? (
           <button
             onClick={startScanning}
-            className="px-3 py-1.5 bg-green-500 text-white rounded-full hover:bg-green-600 text-xs sm:text-sm"
+            disabled={isProcessing}
+            className="px-3 py-1.5 bg-green-500 text-white rounded-full hover:bg-green-600 text-xs sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Start Scanning
           </button>
         ) : (
           <button
             onClick={stopScanning}
-            className="px-3 py-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 text-xs sm:text-sm"
+            disabled={isProcessing}
+            className="px-3 py-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 text-xs sm:text-sm disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Stop Scanning
           </button>
