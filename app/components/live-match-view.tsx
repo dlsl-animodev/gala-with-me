@@ -292,15 +292,24 @@ export default function LiveMatchView() {
                         <p className="text-orange-900 font-bold">
                           {match.user1.name}
                         </p>
+                        <p className="text-orange-700 opacity-80">
+                          {match.user1.department}
+                        </p>
                       </div>
-                        
+
                       <div className="flex justify-center">
-                        <div className="w-8 h-8 bg-gradient-to-r from-red-500 to-pink-500 rounded-full flex items-center justify-center shadow-lg animate-pulse"></div>
+                        <div className="w-8 h-8 bg-gradient-to-r from-red-500 to-pink-500 rounded-full flex items-center justify-center shadow-lg animate-pulse">
+                          <span className="text-white font-bold">💕</span>
+                        </div>
                       </div>
 
                       <div className="bg-gradient-to-r from-orange-100 to-amber-100 rounded-xl p-3 text-center border border-orange-200">
                         <p className="text-orange-900 font-bold">
                           {match.user2.name}
+                        </p>
+                        <p className="text-orange-700 opacity-80">
+                          {match.user2.department}
+                        </p>
                       </div>
                     </div>
 
@@ -333,7 +342,7 @@ export default function LiveMatchView() {
             {totalMatches > 50 && (
               <div className="absolute bottom-8 left-8 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-full px-6 py-3 shadow-xl animate-pulse z-50">
                 <span className="font-bold text-lg">
-                  🔥 Hot Night! {totalMatches} Matches! 🔥
+                  🔥{totalMatches} Matches! 🔥
                 </span>
               </div>
             )}
@@ -359,7 +368,7 @@ export default function LiveMatchView() {
       <div className="absolute bottom-0 left-0 right-0 bg-white/80 backdrop-blur-md border-t border-orange-200 px-12 py-4">
         <div className="text-center">
           <p className="text-orange-700 text-xl font-semibold animate-pulse">
-            🔄 Page updates automatically • Live TV Display
+            🔴 Live TV Display
           </p>
         </div>
       </div>
