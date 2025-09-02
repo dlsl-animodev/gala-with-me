@@ -134,6 +134,7 @@ export default function LiveMatchView() {
   // Utility: try to extract an hour number (0-23) from various possible formats,
   // then normalize it to 1..12 for display/filtering
   const getHourFromMatch = (match: MatchWithUsers): number => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const raw = (match as any).agreed_time;
 
     // If it's a number, assume it's an hour or 24-hour hour integer
