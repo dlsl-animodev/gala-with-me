@@ -35,16 +35,16 @@ export default function QRActions({
 
   if (mode === "show-qr") {
     return (
-      <div className="flex flex-col items-center space-y-12">
+      <div className="flex flex-col items-center space-y-4 sm:space-y-8 h-full justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-center mt-5 mb-3">
+          <h2 className="text-xl sm:text-2xl font-bold text-center mt-2 sm:mt-5 mb-2">
             Your QR Code
           </h2>
-          <code className="bg-muted relative rounded px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold ">
+          <code className="bg-muted relative rounded px-[0.3rem] py-[0.2rem] font-mono text-xs sm:text-sm font-semibold">
             You selected: {selectedTime?.hour()} o&apos;clock
           </code>
         </div>
-        <p className="text-center text-gray-600">
+        <p className="text-center text-gray-600 text-xs sm:text-sm px-2">
           Share this QR code with someone you want to match with who selected
           the same time
         </p>
@@ -53,7 +53,7 @@ export default function QRActions({
 
         <button
           onClick={onBack}
-          className="px-6 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+          className="px-4 sm:px-6 py-1.5 sm:py-2 bg-gray-500 text-white rounded-full hover:bg-gray-600 text-sm sm:text-base font-medium mb-2"
         >
           Back to Clock
         </button>
@@ -63,23 +63,27 @@ export default function QRActions({
 
   if (mode === "scan-qr") {
     return (
-      <div className="flex flex-col items-center space-y-9">
-        <h2 className="text-2xl font-bold text-center mt-5">Scan QR Codes</h2>
-        <code className="bg-muted relative rounded px-[0.3rem] py-[0.2rem] font-mono text-sm font-semibold ">
+      <div className="flex flex-col items-center space-y-2 sm:space-y-4 h-full justify-between">
+        <h2 className="text-xl sm:text-2xl font-bold text-center mt-2 sm:mt-4">
+          Scan QR Codes
+        </h2>
+        <code className="bg-muted relative rounded px-[0.3rem] py-[0.2rem] font-mono text-xs sm:text-sm font-semibold">
           You selected: {selectedTime?.hour()} o&apos;clock
         </code>
-        <p className="text-center text-gray-600">
+        <p className="text-center text-gray-600 text-xs sm:text-sm px-2">
           Scan someone&apos;s QR code to see if you have matching times
         </p>
 
-        <QRScannerComponent
-          onScanSuccess={onScanSuccess}
-          onScanError={(error) => console.error("QR scan error:", error)}
-        />
+        <div className="flex-1 w-full flex items-center justify-center max-h-[60%]">
+          <QRScannerComponent
+            onScanSuccess={onScanSuccess}
+            onScanError={(error) => console.error("QR scan error:", error)}
+          />
+        </div>
 
         <button
           onClick={onBack}
-          className="px-6 py-2 bg-gray-500 text-white rounded hover:bg-gray-600"
+          className="px-4 sm:px-6 py-1.5 sm:py-2 bg-gray-500 text-white rounded-full hover:bg-gray-600 text-sm sm:text-base font-medium mb-2"
         >
           Back to Clock
         </button>
