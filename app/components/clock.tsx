@@ -71,14 +71,12 @@ export default function Clock() {
     createOrUpdateUser,
   ]);
 
-  // fetch matched hours when component mounts
   useEffect(() => {
     if (user) {
       fetchMatchedHours();
     }
   }, [user, fetchMatchedHours]);
 
-  // switch to matched mode when a match is found
   useEffect(() => {
     if (matchedUser && success) {
       setMode("matched");
@@ -107,16 +105,16 @@ export default function Clock() {
 
   if (authLoading) {
     return (
-      <div className="h-screen bg-gradient-to-br from-orange-400 via-orange-300 to-amber-200 flex items-center justify-center p-4">
-        <div className="text-center bg-white/90 backdrop-blur-sm rounded-3xl p-6 sm:p-8 shadow-2xl border-4 border-orange-400 max-w-sm w-full">
+      <div className="h-[100dvh] bg-gradient-to-br from-orange-400 via-orange-300 to-amber-200 flex items-center justify-center p-4">
+        <div className="text-center bg-white/90 backdrop-blur-sm rounded-3xl p-4 sm:p-6 shadow-2xl border-4 border-orange-400 max-w-sm w-full">
           <div className="relative">
-            <div className="animate-spin rounded-full h-20 w-20 sm:h-32 sm:w-32 border-6 sm:border-8 border-orange-200 border-t-orange-500 mx-auto"></div>
-            <div className="absolute inset-0 animate-ping rounded-full h-20 w-20 sm:h-32 sm:w-32 border-3 sm:border-4 border-orange-300 mx-auto opacity-20"></div>
+            <div className="animate-spin rounded-full h-16 w-16 sm:h-24 sm:w-24 border-6 border-orange-200 border-t-orange-500 mx-auto"></div>
+            <div className="absolute inset-0 animate-ping rounded-full h-16 w-16 sm:h-24 sm:w-24 border-3 border-orange-300 mx-auto opacity-20"></div>
           </div>
-          <p className="mt-4 sm:mt-6 text-lg sm:text-2xl font-bold text-orange-800 animate-pulse">
+          <p className="mt-3 text-lg font-bold text-orange-800 animate-pulse">
             Loading...
           </p>
-          <div className="mt-1 sm:mt-2 text-sm sm:text-base text-orange-600">
+          <div className="mt-1 text-sm text-orange-600">
             Setting up your retro experience!
           </div>
         </div>
@@ -126,17 +124,13 @@ export default function Clock() {
 
   if (authError) {
     return (
-      <div className="h-screen bg-gradient-to-br from-red-400 via-orange-400 to-amber-300 flex items-center justify-center p-4">
-        <div className="text-center bg-white/95 backdrop-blur-sm rounded-3xl p-6 sm:p-8 shadow-2xl border-4 border-red-400 animate-bounce max-w-sm w-full">
-          <div className="text-4xl sm:text-6xl mb-3 sm:mb-4 animate-pulse">
-            ⚠️
-          </div>
-          <p className="text-red-700 mb-4 sm:mb-6 text-lg sm:text-xl font-bold">
-            {authError}
-          </p>
+      <div className="h-[100dvh] bg-gradient-to-br from-red-400 via-orange-400 to-amber-300 flex items-center justify-center p-4">
+        <div className="text-center bg-white/95 backdrop-blur-sm rounded-3xl p-4 sm:p-6 shadow-2xl border-4 border-red-400 animate-bounce max-w-sm w-full">
+          <div className="text-4xl mb-2 animate-pulse">⚠️</div>
+          <p className="text-red-700 mb-4 text-lg font-bold">{authError}</p>
           <button
             onClick={() => window.location.reload()}
-            className="px-6 py-3 sm:px-8 sm:py-4 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-full hover:from-orange-600 hover:to-red-600 transform hover:scale-105 transition-all duration-300 shadow-lg text-lg sm:text-xl font-bold"
+            className="px-6 py-2 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-full hover:from-orange-600 hover:to-red-600 transition-all duration-300 shadow-lg text-base font-bold"
           >
             🔄 Retry
           </button>
@@ -147,13 +141,13 @@ export default function Clock() {
 
   if (!student) {
     return (
-      <div className="h-screen bg-gradient-to-br from-orange-400 via-amber-300 to-yellow-200 flex items-center justify-center p-4">
-        <div className="text-center bg-white/90 backdrop-blur-sm rounded-3xl p-6 sm:p-8 shadow-2xl border-4 border-orange-400 animate-pulse max-w-sm w-full">
-          <div className="text-6xl sm:text-8xl mb-3 sm:mb-4">🔐</div>
-          <p className="text-orange-800 mb-3 sm:mb-4 text-lg sm:text-2xl font-bold">
+      <div className="h-[100dvh] bg-gradient-to-br from-orange-400 via-amber-300 to-yellow-200 flex items-center justify-center p-4">
+        <div className="text-center bg-white/90 backdrop-blur-sm rounded-3xl p-4 sm:p-6 shadow-2xl border-4 border-orange-400 animate-pulse max-w-sm w-full">
+          <div className="text-5xl mb-3">🔐</div>
+          <p className="text-orange-800 mb-3 text-lg font-bold">
             Please log in to continue
           </p>
-          <div className="text-sm sm:text-base text-orange-600">
+          <div className="text-sm text-orange-600">
             Access your retro experience!
           </div>
         </div>
@@ -163,16 +157,16 @@ export default function Clock() {
 
   if (!user) {
     return (
-      <div className="h-screen bg-gradient-to-br from-orange-400 via-orange-300 to-amber-200 flex items-center justify-center p-4">
-        <div className="text-center bg-white/90 backdrop-blur-sm rounded-3xl p-6 sm:p-8 shadow-2xl border-4 border-orange-400 max-w-sm w-full">
-          <div className="relative mb-4 sm:mb-6">
-            <div className="animate-spin rounded-full h-20 w-20 sm:h-32 sm:w-32 border-6 sm:border-8 border-orange-200 border-t-orange-500 mx-auto"></div>
-            <div className="absolute inset-0 animate-pulse rounded-full h-20 w-20 sm:h-32 sm:w-32 bg-orange-100 mx-auto opacity-30"></div>
+      <div className="h-[100dvh] bg-gradient-to-br from-orange-400 via-orange-300 to-amber-200 flex items-center justify-center p-4">
+        <div className="text-center bg-white/90 backdrop-blur-sm rounded-3xl p-4 sm:p-6 shadow-2xl border-4 border-orange-400 max-w-sm w-full">
+          <div className="relative mb-4">
+            <div className="animate-spin rounded-full h-16 w-16 sm:h-24 sm:w-24 border-6 border-orange-200 border-t-orange-500 mx-auto"></div>
+            <div className="absolute inset-0 animate-pulse rounded-full h-16 w-16 sm:h-24 sm:w-24 bg-orange-100 mx-auto opacity-30"></div>
           </div>
-          <p className="text-lg sm:text-2xl font-bold text-orange-800 animate-bounce">
+          <p className="text-lg font-bold text-orange-800 animate-bounce">
             Setting up your profile...
           </p>
-          <div className="mt-1 sm:mt-2 text-sm sm:text-base text-orange-600">
+          <div className="mt-1 text-sm text-orange-600">
             Almost ready for the retro vibes!
           </div>
         </div>
@@ -181,60 +175,80 @@ export default function Clock() {
   }
 
   return (
-    <div className="h-screen bg-gradient-to-br from-orange-400 via-orange-300 to-amber-200 relative overflow-hidden">
+    <div className="h-[100dvh] bg-gradient-to-br from-orange-400 via-orange-300 to-amber-200 relative overflow-hidden">
       {/* Animated Background Elements - Hidden on small screens */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none hidden sm:block">
-        <div className="absolute top-10 left-10 w-12 h-12 sm:w-20 sm:h-20 bg-white/20 rounded-full animate-bounce animation-delay-1000"></div>
-        <div className="absolute top-32 right-20 w-10 h-10 sm:w-16 sm:h-16 bg-orange-200/30 rounded-full animate-pulse"></div>
-        <div className="absolute bottom-20 left-1/4 w-16 h-16 sm:w-24 sm:h-24 bg-amber-200/20 rounded-full animate-bounce animation-delay-2000"></div>
-        <div className="absolute bottom-40 right-1/3 w-8 h-8 sm:w-12 sm:h-12 bg-white/25 rounded-full animate-ping animation-delay-3000"></div>
+        <div className="absolute top-10 left-10 w-10 h-10 bg-white/20 rounded-full animate-bounce animation-delay-1000"></div>
+        <div className="absolute top-32 right-20 w-8 h-8 bg-orange-200/30 rounded-full animate-pulse"></div>
+        <div className="absolute bottom-20 left-1/4 w-12 h-12 bg-amber-200/20 rounded-full animate-bounce animation-delay-2000"></div>
+        <div className="absolute bottom-40 right-1/3 w-6 h-6 bg-white/25 rounded-full animate-ping animation-delay-3000"></div>
       </div>
 
-      <div className="h-full flex flex-col p-3 sm:p-4 md:p-8 relative z-10">
+      <div className="h-full flex flex-col p-2 sm:p-3 relative z-10">
         <div className="flex-1 max-w-2xl mx-auto w-full flex flex-col">
-          {/* Header - Extra Compact */}
-          <div className="text-center mb-2 sm:mb-3 md:mb-4 animate-fade-in">
-            <div className="bg-white/90 backdrop-blur-sm rounded-xl sm:rounded-2xl p-2 sm:p-3 md:p-4 shadow-xl border border-orange-400 transform hover:scale-105 transition-all duration-300">
-              <h1 className="text-lg sm:text-xl md:text-2xl font-black mb-1 bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">
+          {/* Header - More Compact */}
+          <div className="text-center mb-1 sm:mb-2 animate-fade-in">
+            <div className="bg-white/90 backdrop-blur-sm rounded-xl p-2 shadow-xl border border-orange-400 transform hover:scale-105 transition-all duration-300">
+              <h1 className="text-base sm:text-lg font-black bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent">
                 🕺 Gala with me! 💃
               </h1>
-              <p className="text-xs sm:text-sm md:text-base text-orange-800 font-bold truncate">
-                Welcome, {user.name}!
-              </p>
-              <button
-                onClick={logout}
-                className="mt-3 sm:mt-3 px-3 py-1 sm:px-4 sm:py-2 bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-full hover:from-red-600 hover:to-orange-600 transform hover:scale-105 transition-all duration-300 shadow-md font-bold text-xs sm:text-sm"
-              >
-                Log Out
-              </button>
+              <div className="flex justify-between items-center mt-1">
+                <div className="flex-1"></div>
+                <div className="flex-1 flex justify-center">
+                  <p className="text-xs text-orange-800 font-bold truncate">
+                    Welcome, {user.name}!
+                  </p>
+                </div>
+                <div className="flex-1 flex justify-end">
+                  <button
+                    onClick={logout}
+                    className="px-2 py-1 bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-full text-xs hover:from-red-600 hover:to-orange-600 transform hover:scale-105 transition-all duration-300 shadow-md font-bold"
+                  >
+                    Log Out
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Error Display - Compact */}
+          {/* Error Display - Compact Modal */}
           {error && (
-            <div className="mb-3 sm:mb-4 md:mb-6 animate-shake">
-              <div className="p-3 sm:p-4 md:p-6 bg-gradient-to-r from-red-100 to-orange-100 border-2 sm:border-4 border-red-400 text-red-800 rounded-2xl sm:rounded-3xl shadow-lg backdrop-blur-sm">
-                <div className="flex items-center">
-                  <span className="text-lg sm:text-xl md:text-2xl mr-2 sm:mr-3 animate-bounce">
-                    ❌
-                  </span>
-                  <span className="font-bold text-sm sm:text-base md:text-lg truncate">
-                    {error}
-                  </span>
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in">
+              {/* Backdrop */}
+              <div
+                className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+                onClick={() => setError("")}
+              ></div>
+
+              {/* Modal content */}
+              <div className="relative z-10 w-full max-w-md transform animate-shake">
+                <div className="p-3 bg-gradient-to-r from-red-100 to-orange-100 border-2 border-red-400 text-red-800 rounded-2xl shadow-xl">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center flex-1">
+                      <span className="text-lg mr-2 animate-bounce">❌</span>
+                      <span className="font-bold text-xs sm:text-sm">
+                        {error}
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => setError("")}
+                      className="text-red-700 hover:text-red-900 ml-4"
+                    >
+                      <span className="text-xl">×</span>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
           )}
 
-          {/* Success Display - Compact */}
+          {/* Success Display - Smaller */}
           {success && mode !== "matched" && (
-            <div className="mb-3 sm:mb-4 md:mb-6 animate-bounce">
-              <div className="p-3 sm:p-4 md:p-6 bg-gradient-to-r from-green-100 to-lime-100 border-2 sm:border-4 border-green-400 text-green-800 rounded-2xl sm:rounded-3xl shadow-lg backdrop-blur-sm">
+            <div className="mb-2 animate-bounce">
+              <div className="p-2 bg-gradient-to-r from-green-100 to-lime-100 border-2 border-green-400 text-green-800 rounded-2xl shadow-lg backdrop-blur-sm">
                 <div className="flex items-center">
-                  <span className="text-lg sm:text-xl md:text-2xl mr-2 sm:mr-3 animate-pulse">
-                    ✅
-                  </span>
-                  <span className="font-bold text-sm sm:text-base md:text-lg truncate">
+                  <span className="text-lg mr-2 animate-pulse">✅</span>
+                  <span className="font-bold text-xs sm:text-sm truncate">
                     {success}
                   </span>
                 </div>
@@ -242,15 +256,15 @@ export default function Clock() {
             </div>
           )}
 
-          {/* Main Content - Flex-1 to fill remaining space */}
-          <div className="flex-1 bg-white/95 backdrop-blur-sm rounded-2xl sm:rounded-3xl shadow-2xl border-2 sm:border-4 border-orange-400 overflow-hidden transform hover:scale-[1.02] transition-all duration-300">
-            <div className="bg-gradient-to-r from-orange-500 to-amber-500 p-0.5 sm:p-1 h-full">
-              <div className="bg-white rounded-2xl sm:rounded-3xl h-full flex flex-col">
-                <div className="flex-1 p-4 sm:p-6 md:p-8 overflow-y-auto">
+          {/* Main Content - More compact */}
+          <div className="flex-1 bg-white/95 backdrop-blur-sm rounded-2xl shadow-2xl border-2 border-orange-400 overflow-hidden transform hover:scale-[1.02] transition-all duration-300">
+            <div className="bg-gradient-to-r from-orange-500 to-amber-500 p-0.5 h-full">
+              <div className="bg-white rounded-2xl h-full flex flex-col">
+                <div className="flex-1 p-3 overflow-hidden">
                   {mode === "clock" && (
                     <div className="animate-fade-in h-full flex flex-col">
                       <div className="flex-1">
-                        <div className="mt-4">
+                        <div className="mt-2">
                           <DotPattern />
                         </div>
 
@@ -265,17 +279,17 @@ export default function Clock() {
                       {selectedTime && (
                         <div
                           key={mode}
-                          className="mt-1 sm:mt-1 md:mt-2 flex flex-col sm:flex-row justify-center space-y-2 sm:space-y-0 sm:space-x-4 md:space-x-6 animate-slide-up"
+                          className="mt-1 flex flex-row justify-center space-x-3 animate-slide-up"
                         >
                           <button
                             onClick={() => setMode("show-qr")}
-                            className="px-4 py-3 sm:px-6 sm:py-3 md:px-8 md:py-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-full hover:from-orange-600 hover:to-orange-700 transform hover:scale-110 hover:rotate-1 transition-all duration-300 shadow-xl font-bold text-sm sm:text-base md:text-lg flex items-center justify-center space-x-2"
+                            className="px-3 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-full hover:from-orange-600 hover:to-orange-700 transform hover:scale-105 transition-all duration-300 shadow-lg font-bold text-xs sm:text-sm flex items-center justify-center"
                           >
                             <span>Generate QR</span>
                           </button>
                           <button
                             onClick={() => setMode("scan-qr")}
-                            className="px-4 py-3 sm:px-6 sm:py-3 md:px-8 md:py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-full hover:from-green-600 hover:to-emerald-700 transform hover:scale-110 hover:rotate-[-1deg] transition-all duration-300 shadow-xl font-bold text-sm sm:text-base md:text-lg flex items-center justify-center space-x-2"
+                            className="px-3 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-full hover:from-green-600 hover:to-emerald-700 transform hover:scale-105 transition-all duration-300 shadow-lg font-bold text-xs sm:text-sm flex items-center justify-center"
                           >
                             <span>Scan QR</span>
                           </button>
@@ -297,7 +311,7 @@ export default function Clock() {
                   )}
 
                   {mode === "matched" && matchedUser && (
-                    <div className=" h-full">
+                    <div className="h-full">
                       <MatchResult
                         matchedUser={matchedUser}
                         success={success}
@@ -341,7 +355,7 @@ export default function Clock() {
         @keyframes fade-in {
           from {
             opacity: 0;
-            transform: translateY(20px);
+            transform: translateY(10px);
           }
           to {
             opacity: 1;
@@ -352,7 +366,7 @@ export default function Clock() {
         @keyframes slide-up {
           from {
             opacity: 0;
-            transform: translateY(30px);
+            transform: translateY(15px);
           }
           to {
             opacity: 1;
@@ -379,27 +393,21 @@ export default function Clock() {
         .animate-shake {
           animation: shake 0.5s ease-in-out;
         }
-
         .animate-fade-in {
           animation: fade-in 0.6s ease-out;
         }
-
         .animate-slide-up {
           animation: slide-up 0.8s ease-out;
         }
-
         .animate-celebration {
           animation: celebration 1s ease-in-out infinite;
         }
-
         .animation-delay-1000 {
           animation-delay: 1s;
         }
-
         .animation-delay-2000 {
           animation-delay: 2s;
         }
-
         .animation-delay-3000 {
           animation-delay: 3s;
         }
@@ -408,6 +416,7 @@ export default function Clock() {
         html,
         body {
           overflow: hidden;
+          height: 100%;
         }
       `}</style>
     </div>

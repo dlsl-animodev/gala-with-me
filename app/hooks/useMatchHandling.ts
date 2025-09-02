@@ -201,9 +201,7 @@ export function useMatchHandling({ user }: UseMatchHandlingProps) {
           hint: matchError.hint,
           code: matchError.code,
         });
-        setError(
-          `Failed to create match: ${matchError.message || "Unknown error"}`
-        );
+        setError(`You can't match with the same person more than once!`);
         return;
       }
 
