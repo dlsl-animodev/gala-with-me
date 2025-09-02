@@ -52,6 +52,11 @@ export default function TimePicker({
   const hours = [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
   const selectedHour = getSelectedHour();
 
+  const handlePopModal = () => {
+    //if user has a match in the selected
+    
+  }
+
   return (
     <div className="flex flex-col items-center space-y-4 sm:space-y-6">
       <h2 className="text-lg mt-6 sm:text-xl md:text-2xl font-black text-center bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent animate-pulse">
@@ -121,12 +126,12 @@ export default function TimePicker({
               >
                 <button
                   onClick={() => !isMatched && handleHourSelect(hour)}
-                  disabled={isMatched}
+                
                   className={`
                     w-10 h-10 sm:w-12 sm:h-12 rounded-full font-black text-sm sm:text-lg transition-all duration-300 relative
                     ${
                       isMatched
-                        ? "bg-gradient-to-br from-gray-300 to-gray-400 text-gray-500 cursor-not-allowed opacity-60 shadow-inner"
+                        ? "bg-gradient-to-br from-gray-300 to-gray-400 text-gray-500  opacity-60 shadow-inner"
                         : isSelected
                         ? "bg-gradient-to-br from-orange-500 to-amber-600 text-white shadow-xl border-2 border-white hour-button-selected"
                         : "bg-gradient-to-br from-white to-orange-100 text-orange-800 border-2 border-orange-300 hover:border-orange-500 hover:from-orange-200 hover:to-amber-200 hover:scale-110 shadow-lg hover:shadow-xl"
