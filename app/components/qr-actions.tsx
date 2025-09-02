@@ -1,9 +1,10 @@
 "use client";
 
 import { Dayjs } from "dayjs";
+import { useRef, useEffect } from "react";
 import { User } from "../live/lib/supabase";
 import QRCodeDisplay from "./qr-code-display";
-import QRScannerComponent from "./qr-scanner";
+import QRScannerComponent, { QRScannerRef } from "./qr-scanner";
 
 interface QRActionsProps {
   user: User | null;
@@ -20,6 +21,43 @@ export default function QRActions({
   onScanSuccess,
   onBack,
 }: QRActionsProps) {
+  const qrScannerRef = useRef<QRScannerRef>(null);
+
+  const handleBack = () => {
+    // Stop camera before going back
+    if (qrScannerRef.current) {
+      qrScannerRef.current.stopCamera();
+    }
+    onBack();
+  };
+
+  // camera will be stopped when user leaves scan qr page
+  useEffect(() => {
+    const currentRef = qrScannerRef.current;
+    
+    // cleanup when user exits scan qr page
+    if (mode !== "scan-qr" && currentRef) {
+      currentRef.stopCamera();
+    }
+    
+    return () => {
+      // cleanup on unmount
+      if (currentRef) {
+        currentRef.stopCamera();
+      }
+    };
+  }, [mode]);
+
+  // Additional cleanup on unmount
+  useEffect(() => {
+    const currentRef = qrScannerRef.current;
+    return () => {
+      console.log("QRActions final cleanup");
+      if (currentRef) {
+        currentRef.stopCamera();
+      }
+    };
+  }, []);
   const getQRCodeData = () => {
     if (!user || selectedTime === null) return "";
 
@@ -52,7 +90,7 @@ export default function QRActions({
         <QRCodeDisplay value={getQRCodeData()} />
 
         <button
-          onClick={onBack}
+          onClick={handleBack}
           className="px-4 sm:px-6 py-1.5 sm:py-2 bg-gray-500 text-white rounded-full hover:bg-gray-600 text-sm sm:text-base font-medium mb-2"
         >
           Back to Clock
@@ -76,13 +114,14 @@ export default function QRActions({
 
         <div className="flex-1 w-full flex items-center justify-center max-h-[60%]">
           <QRScannerComponent
+            ref={qrScannerRef}
             onScanSuccess={onScanSuccess}
             onScanError={(error) => console.error("QR scan error:", error)}
           />
         </div>
 
         <button
-          onClick={onBack}
+          onClick={handleBack}
           className="px-4 sm:px-6 py-1.5 sm:py-2 bg-gray-500 text-white rounded-full hover:bg-gray-600 text-sm sm:text-base font-medium mb-2"
         >
           Back to Clock
