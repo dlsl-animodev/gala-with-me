@@ -128,24 +128,60 @@ export default function LiveMatchView() {
     });
   };
 
-  // Get random position for floating match cards
-  const getRandomPosition = (index: number) => {
-    const positions = [
-      { top: "10%", left: "15%" },
-      { top: "25%", left: "70%" },
-      { top: "45%", left: "10%" },
-      { top: "15%", right: "20%" },
-      { top: "60%", left: "25%" },
-      { top: "30%", right: "15%" },
-      { top: "70%", left: "60%" },
-      { top: "55%", right: "25%" },
-      { top: "20%", left: "45%" },
-      { top: "75%", right: "40%" },
-      { top: "40%", left: "75%" },
-      { top: "85%", left: "20%" },
-    ];
-    return positions[index % positions.length];
+  // Get random position for floating match cards with more spread
+  const getRandomPosition = (index: number, totalCount: number) => {
+    // Generate positions in a grid-like pattern but with random offsets
+    const cols = Math.ceil(Math.sqrt(totalCount * 1.5));
+    const rows = Math.ceil(totalCount / cols);
+
+    const col = index % cols;
+    const row = Math.floor(index / cols);
+
+    // Base position with some randomness
+    const baseLeft = (col / (cols - 1)) * 70 + Math.random() * 10;
+    const baseTop = (row / (rows - 1)) * 70 + Math.random() * 10;
+
+    return {
+      top: `${Math.min(85, Math.max(5, baseTop))}%`,
+      left: `${Math.min(85, Math.max(5, baseLeft))}%`,
+    };
   };
+
+  // Calculate card size based on number of matches
+  const getCardScale = (matchCount: number) => {
+    if (matchCount <= 5) return "scale-100"; // Large cards
+    if (matchCount <= 10) return "scale-90"; // Medium-large cards
+    if (matchCount <= 20) return "scale-75"; // Medium cards
+    if (matchCount <= 40) return "scale-50"; // Small cards
+    if (matchCount <= 80) return "scale-[0.35]"; // Tiny cards
+    return "scale-[0.25]"; // Micro cards for 100+ matches
+  };
+
+  // Get font size classes based on match count
+  const getFontSizeClass = (matchCount: number) => {
+    if (matchCount <= 20) return "text-base";
+    if (matchCount <= 40) return "text-sm";
+    if (matchCount <= 80) return "text-xs";
+    return "text-[10px]"; // Very small text for 100+ matches
+  };
+
+  // Get random rotation angle
+  const getRandomRotation = (index: number) => {
+    const rotations = [-8, -5, -3, -2, 2, 3, 5, 8];
+    return rotations[index % rotations.length];
+  };
+
+  // Determine how many cards to display
+  const getDisplayCount = (totalCount: number) => {
+    if (totalCount <= 20) return totalCount;
+    if (totalCount <= 50) return Math.min(30, totalCount);
+    if (totalCount <= 100) return Math.min(40, totalCount);
+    return 50; // Max 50 cards displayed for 100+ matches
+  };
+
+  const cardScale = getCardScale(totalMatches);
+  const fontSizeClass = getFontSizeClass(totalMatches);
+  const displayCount = getDisplayCount(totalMatches);
 
   if (loading) {
     return (
@@ -214,21 +250,23 @@ export default function LiveMatchView() {
       <div className="pt-40 pb-20 px-8 h-full relative">
         {matches.length > 0 ? (
           <div className="relative h-full">
-            {matches.slice(0, 12).map((match, index) => {
-              const position = getRandomPosition(index);
+            {matches.slice(0, displayCount).map((match, index) => {
+              const position = getRandomPosition(index, displayCount);
+              const rotation = getRandomRotation(index);
               const isNewMatch = newMatchAnimation === match.id;
 
               return (
                 <div
                   key={match.id}
-                  className={`absolute transform animate-slide-in-random ${
+                  className={`absolute transform animate-slide-in-random ${cardScale} ${
                     isNewMatch
-                      ? "animate-new-match z-40 scale-125"
+                      ? "animate-new-match z-40 !scale-125"
                       : "animate-float-gentle"
                   }`}
                   style={{
                     ...position,
-                    animationDelay: `${index * 0.3}s`,
+                    transform: `${isNewMatch ? "" : `rotate(${rotation}deg)`}`,
+                    animationDelay: `${index * 0.1}s`,
                     animationDuration: isNewMatch
                       ? "2s"
                       : `${6 + Math.random() * 4}s`,
@@ -239,11 +277,11 @@ export default function LiveMatchView() {
                       isNewMatch
                         ? "ring-8 ring-amber-400 ring-opacity-50 shadow-amber-400/50"
                         : "hover:shadow-orange-300/30"
-                    }`}
+                    } ${fontSizeClass}`}
                   >
                     {/* Match Badge */}
                     <div className="text-center mb-4">
-                      <span className="bg-gradient-to-r from-orange-500 to-amber-500 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg animate-pulse">
+                      <span className="bg-gradient-to-r from-orange-500 to-amber-500 text-white px-4 py-2 rounded-full font-bold shadow-lg animate-pulse">
                         Match #{matches.length - index}
                       </span>
                     </div>
@@ -251,33 +289,29 @@ export default function LiveMatchView() {
                     {/* Users */}
                     <div className="space-y-3">
                       <div className="bg-gradient-to-r from-orange-100 to-amber-100 rounded-xl p-3 text-center border border-orange-200">
-                        <p className="text-orange-900 font-bold text-lg">
+                        <p className="text-orange-900 font-bold">
                           {match.user1.name}
                         </p>
                       </div>
-
+                        
                       <div className="flex justify-center">
-                        <div className="w-8 h-8 bg-gradient-to-r from-red-500 to-pink-500 rounded-full flex items-center justify-center shadow-lg animate-pulse">
-                          
-                        </div>
+                        <div className="w-8 h-8 bg-gradient-to-r from-red-500 to-pink-500 rounded-full flex items-center justify-center shadow-lg animate-pulse"></div>
                       </div>
 
                       <div className="bg-gradient-to-r from-orange-100 to-amber-100 rounded-xl p-3 text-center border border-orange-200">
-                        <p className="text-orange-900 font-bold text-lg">
+                        <p className="text-orange-900 font-bold">
                           {match.user2.name}
-                          
-                        </p>
                       </div>
                     </div>
 
                     {/* Time */}
                     <div className="text-center mt-4">
                       <div className="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-4 py-2 rounded-full shadow-lg">
-                        <span className="font-bold text-lg">
+                        <span className="font-bold">
                           ⏰ {formatTime(match.agreed_time)}
                         </span>
                       </div>
-                      <p className="text-orange-600 text-xs mt-2">
+                      <p className="text-orange-600 opacity-80 mt-2">
                         {formatDate(match.created_at)}
                       </p>
                     </div>
@@ -286,11 +320,20 @@ export default function LiveMatchView() {
               );
             })}
 
-            {/* Overflow indicator for more than 12 matches */}
-            {matches.length > 12 && (
-              <div className="absolute bottom-8 right-8 bg-white/90 backdrop-blur-md rounded-full px-6 py-3 shadow-xl border-2 border-orange-300 animate-bounce">
-                <span className="text-orange-700 font-bold">
-                  +{matches.length - 12} more matches! 🎊
+            {/* Overflow indicator for hidden matches */}
+            {matches.length > displayCount && (
+              <div className="absolute bottom-8 right-8 bg-white/90 backdrop-blur-md rounded-full px-6 py-3 shadow-xl border-2 border-orange-300 animate-bounce z-50">
+                <span className="text-orange-700 font-bold text-lg">
+                  +{matches.length - displayCount} more matches! 🎊
+                </span>
+              </div>
+            )}
+
+            {/* Indicator for large number of matches */}
+            {totalMatches > 50 && (
+              <div className="absolute bottom-8 left-8 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-full px-6 py-3 shadow-xl animate-pulse z-50">
+                <span className="font-bold text-lg">
+                  🔥 Hot Night! {totalMatches} Matches! 🔥
                 </span>
               </div>
             )}
@@ -335,27 +378,27 @@ export default function LiveMatchView() {
         @keyframes float-gentle {
           0%,
           100% {
-            transform: translateY(0px) translateX(0px) rotate(0deg);
+            transform: translateY(0px) translateX(0px);
           }
           25% {
-            transform: translateY(-10px) translateX(5px) rotate(1deg);
+            transform: translateY(-10px) translateX(5px);
           }
           50% {
-            transform: translateY(-5px) translateX(-5px) rotate(-1deg);
+            transform: translateY(-5px) translateX(-5px);
           }
           75% {
-            transform: translateY(-15px) translateX(3px) rotate(0.5deg);
+            transform: translateY(-15px) translateX(3px);
           }
         }
 
         @keyframes slide-in-random {
           0% {
             opacity: 0;
-            transform: translateY(50px) scale(0.8) rotate(-10deg);
+            transform: translateY(50px) scale(0.8);
           }
           100% {
             opacity: 1;
-            transform: translateY(0px) scale(1) rotate(0deg);
+            transform: translateY(0px) scale(1);
           }
         }
 

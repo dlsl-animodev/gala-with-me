@@ -5,7 +5,7 @@ import { useAuth } from "../context/auth-context";
 import Clock from "./clock";
 import { TextAnimate } from "@/components/magicui/text-animate";
 import { HyperText } from "@/components/magicui/hyper-text";
-import { WarpBackground } from "@/components/magicui/warp-background";
+import CanvasBackground from "./canvas-background";
 
 export default function RegistrationPage() {
   const [studentId, setStudentId] = useState("");
@@ -79,15 +79,8 @@ export default function RegistrationPage() {
 
   return (
     <div className="relative min-h-screen w-full overflow-hidden h-screen">
-      <WarpBackground
-        className="absolute inset-0 w-full h-full"
-        gridColor="rgba(255, 255, 255, 0.15)"
-        beamsPerSide={4}
-        beamSize={6}
-        perspective={200}
-      >
-        <div></div>
-      </WarpBackground>
+      {/* Canvas Animated Background - Better performance */}
+      <CanvasBackground bubbleCount={25} />
 
       {/* Gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-orange-400/80 via-orange-500/80 to-orange-600/80" />

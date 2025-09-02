@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "../context/auth-context";
 import { useMatchHandling } from "../hooks/useMatchHandling";
 import TimePicker from "./time-picker";
 import QRActions from "./qr-actions";
 import MatchResult from "./match-result";
 import { Dayjs } from "dayjs";
-import { Confetti, ConfettiRef } from "@/components/magicui/confetti";
+import CanvasConfetti from "./canvas-confetti";
 import { DotPattern } from "@/components/magicui/dot-pattern";
 
 type Mode = "clock" | "show-qr" | "scan-qr" | "matched";
@@ -26,7 +26,7 @@ export default function Clock() {
   const [userCreationAttempted, setUserCreationAttempted] =
     useState<boolean>(false);
 
-  const confettiRef = useRef<ConfettiRef>(null);
+  // Replaced with CanvasConfetti
 
   const {
     matchedUser,
@@ -325,9 +325,10 @@ export default function Clock() {
         </div>
       </div>
 
-      <Confetti
-        ref={confettiRef}
-        className="absolute left-0 top-0 z-50 size-full pointer-events-none"
+      <CanvasConfetti
+        isActive={mode === "matched"}
+        duration={8000}
+        particleCount={150}
       />
 
       <style jsx>{`
