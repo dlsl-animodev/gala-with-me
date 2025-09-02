@@ -97,10 +97,6 @@ export default function LiveMatchView() {
             const newMatch = payload.new as Match;
             setNewMatchAnimation(newMatch.id);
 
-            // ** ADD CONFETTI EFFECTS HERE **
-            // You can trigger your confetti library here when a new match is created
-            // Example: triggerConfetti() or confetti.start()
-
             setTimeout(() => setNewMatchAnimation(null), 8000); // Extended animation time for TV
           }
 
@@ -128,6 +124,7 @@ export default function LiveMatchView() {
       hour: "2-digit",
       minute: "2-digit",
       second: "2-digit",
+      timeZone: "Asia/Manila",
     });
   };
 
