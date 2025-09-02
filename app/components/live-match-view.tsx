@@ -261,9 +261,7 @@ export default function LiveMatchView() {
 
                       <div className="flex justify-center">
                         <div className="w-8 h-8 bg-gradient-to-r from-red-500 to-pink-500 rounded-full flex items-center justify-center shadow-lg animate-pulse">
-                          <span className="text-white text-lg font-bold">
-                            💕
-                          </span>
+                          
                         </div>
                       </div>
 
