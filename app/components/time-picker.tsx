@@ -95,6 +95,8 @@ export default function TimePicker({
       setShowModal(true);
     } catch (err) {
       console.error("Error fetching match details:", err);
+    } finally {
+      setIsModalLoading(false);
     }
   };
 
@@ -289,6 +291,20 @@ export default function TimePicker({
           pointer-events: auto;
         }
       `}</style>
+      
+      {/* Loading Modal */}
+      {isModalLoading && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+          <div className="bg-white rounded-3xl shadow-2xl p-6 w-96">
+            <div className="flex flex-col items-center space-y-4">
+              <div className="animate-spin rounded-full h-12 w-12 border-4 border-orange-300 border-t-orange-600"></div>
+              <p className="text-orange-600 font-semibold">Loading match details...</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Match Details Modal */}
       {showModal && matchedPair && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
           <div className="bg-white rounded-3xl shadow-2xl p-6 w-96 animate-pop">
