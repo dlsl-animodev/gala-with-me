@@ -179,6 +179,19 @@ export function useMatchHandling({ user }: UseMatchHandlingProps) {
         return;
       }
 
+      // check if the two users already have a match (in both directions)
+      const { data: existingMatches} = await supabase
+        .from("matches")
+        .select("*")
+        .or(
+          `and(user1_id.eq.${user.id},user2_id.eq.${scannedUserId}),and(user1_id.eq.${scannedUserId},user2_id.eq.${user.id})`
+        );
+
+      if (existingMatches && existingMatches.length > 0) {
+        setError(`You can't match with the same person more than once!`);
+        return;
+      }
+
       // create a match
       const matchData = {
         user1_id: user.id,
