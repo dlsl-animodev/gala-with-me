@@ -65,6 +65,16 @@ const QRScannerComponent = forwardRef<QRScannerRef, QRScannerProps>(({
             processingRef.current = true;
             setIsProcessing(true);
             
+            // bug fix: stop the scanner IMMEDIATELY to prevent multiple scans leading to misleading match errors after a successful one
+            if (qrScannerRef.current) {
+              try {
+                qrScannerRef.current.stop();
+                setIsScanning(false);
+              } catch (stopError) {
+                console.error("error stopping scanner immediately:", stopError);
+              }
+            }
+            
             // small delay to show the loading state, then process
             setTimeout(() => {
               onScanSuccessRef.current(result.data);
