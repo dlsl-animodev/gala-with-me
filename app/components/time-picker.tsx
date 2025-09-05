@@ -66,10 +66,14 @@ export default function TimePicker({
     if (!isHourMatched || !isHourMatched(hour)) return;
 
     try {
-      // fetch the match for this user at the selected hour
+      // Fetch match with user details in a single query using joins
       const { data: matchData, error } = await supabase
         .from("matches")
-        .select("*")
+        .select(`
+          *,
+          user1:users!user1_id(*),
+          user2:users!user2_id(*)
+        `)
         .or(`user1_id.eq.${user?.id},user2_id.eq.${user?.id}`)
         .eq("agreed_time", hour)
         .single();
@@ -79,23 +83,13 @@ export default function TimePicker({
         return;
       }
 
-      // fetch user details for both sides
-      const { data: user1Data } = await supabase
-        .from("users")
-        .select("*")
-        .eq("id", matchData.user1_id)
-        .single();
-
-      const { data: user2Data } = await supabase
-        .from("users")
-        .select("*")
-        .eq("id", matchData.user2_id)
-        .single();
-
-      if (user1Data && user2Data) {
-        setMatchedPair({ ...matchData, user1: user1Data, user2: user2Data });
-        setShowModal(true);
-      }
+      // Set the matched pair with joined user data
+      setMatchedPair({
+        ...matchData,
+        user1: matchData.user1,
+        user2: matchData.user2
+      });
+      setShowModal(true);
     } catch (err) {
       console.error("Error fetching match details:", err);
     }
