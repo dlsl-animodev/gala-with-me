@@ -23,6 +23,10 @@ export default function TimePicker({
   onTimeSelect,
   isHourMatched,
 }: TimePickerProps) {
+  const [showModal, setShowModal] = useState(false);
+  const [matchedPair, setMatchedPair] = useState<MatchWithUsers | null>(null);
+  const [isModalLoading, setIsModalLoading] = useState(false);
+
   const updatePreferredTime = async (time: number) => {
 
     if (!user) return;
@@ -59,12 +63,11 @@ export default function TimePicker({
   const hours = [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
   const selectedHour = getSelectedHour();
 
-     const [showModal, setShowModal] = useState(false);
-    const [matchedPair, setMatchedPair] = useState<MatchWithUsers | null>(null);
-
   const handlePopModal = async (hour: number) => {
     if (!isHourMatched || !isHourMatched(hour)) return;
 
+    setIsModalLoading(true);
+    
     try {
       // Fetch match with user details in a single query using joins
       const { data: matchData, error } = await supabase
