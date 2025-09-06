@@ -23,6 +23,10 @@ export default function TimePicker({
   onTimeSelect,
   isHourMatched,
 }: TimePickerProps) {
+  const [showModal, setShowModal] = useState(false);
+  const [matchedPair, setMatchedPair] = useState<MatchWithUsers | null>(null);
+  const [isModalLoading, setIsModalLoading] = useState(false);
+
   const updatePreferredTime = async (time: number) => {
 
     if (!user) return;
@@ -59,17 +63,20 @@ export default function TimePicker({
   const hours = [12, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
   const selectedHour = getSelectedHour();
 
-     const [showModal, setShowModal] = useState(false);
-    const [matchedPair, setMatchedPair] = useState<MatchWithUsers | null>(null);
-
   const handlePopModal = async (hour: number) => {
     if (!isHourMatched || !isHourMatched(hour)) return;
 
+    setIsModalLoading(true);
+    
     try {
-      // fetch the match for this user at the selected hour
+      // Fetch match with user details in a single query using joins
       const { data: matchData, error } = await supabase
         .from("matches")
-        .select("*")
+        .select(`
+          *,
+          user1:users!user1_id(*),
+          user2:users!user2_id(*)
+        `)
         .or(`user1_id.eq.${user?.id},user2_id.eq.${user?.id}`)
         .eq("agreed_time", hour)
         .single();
@@ -79,25 +86,17 @@ export default function TimePicker({
         return;
       }
 
-      // fetch user details for both sides
-      const { data: user1Data } = await supabase
-        .from("users")
-        .select("*")
-        .eq("id", matchData.user1_id)
-        .single();
-
-      const { data: user2Data } = await supabase
-        .from("users")
-        .select("*")
-        .eq("id", matchData.user2_id)
-        .single();
-
-      if (user1Data && user2Data) {
-        setMatchedPair({ ...matchData, user1: user1Data, user2: user2Data });
-        setShowModal(true);
-      }
+      // Set the matched pair with joined user data
+      setMatchedPair({
+        ...matchData,
+        user1: matchData.user1,
+        user2: matchData.user2
+      });
+      setShowModal(true);
     } catch (err) {
       console.error("Error fetching match details:", err);
+    } finally {
+      setIsModalLoading(false);
     }
   };
 
@@ -292,6 +291,20 @@ export default function TimePicker({
           pointer-events: auto;
         }
       `}</style>
+      
+      {/* Loading Modal */}
+      {isModalLoading && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+          <div className="bg-white rounded-3xl shadow-2xl p-6 w-96">
+            <div className="flex flex-col items-center space-y-4">
+              <div className="animate-spin rounded-full h-12 w-12 border-4 border-orange-300 border-t-orange-600"></div>
+              <p className="text-orange-600 font-semibold">Loading match details...</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Match Details Modal */}
       {showModal && matchedPair && (
         <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
           <div className="bg-white rounded-3xl shadow-2xl p-6 w-96 animate-pop">

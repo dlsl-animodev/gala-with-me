@@ -1,4 +1,4 @@
-# Dating Clock
+# Gala With Me
 
 A Next.js application where users can match with others by selecting their preferred time on a clock interface and sharing QR codes.
 
